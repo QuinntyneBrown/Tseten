@@ -1,0 +1,80 @@
+@startuml SpecSync Component Diagram
+
+title SpecSync System Component Diagram
+
+skinparam component {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+}
+
+skinparam package {
+    BackgroundColor LightYellow
+    BorderColor DarkGoldenRod
+}
+
+skinparam database {
+    BackgroundColor LightGreen
+    BorderColor DarkGreen
+}
+
+actor "Software Engineer" as user
+
+package "Frontend" {
+    component [Angular SPA\nSpecSync.App] as spa
+    note right of spa
+        Angular 19
+        TypeScript
+        Standalone Components
+    end note
+}
+
+package "Backend API" {
+    component [REST Controller\nSoftwareRequirementsController] as controller
+    component [MediatR\nDispatcher] as mediator
+    component [Validation Behavior\nFluentValidation] as validation
+
+    package "Request Handlers" {
+        component [CreateHandler] as createHandler
+        component [GetHandler] as getHandler
+        component [GetByIdHandler] as getByIdHandler
+        component [UpdateHandler] as updateHandler
+        component [DeleteHandler] as deleteHandler
+    }
+
+    component [Repository\nSoftwareRequirementsRepository] as repository
+}
+
+package "Shared Libraries" {
+    component [Models Library\nSpecSync.Models] as models
+    component [Validation Library\nSpecSync.Validation] as validationLib
+}
+
+database "Couchbase Lite" as db {
+    storage "software-requirements" as collection
+}
+
+user --> spa : Uses
+spa --> controller : HTTP Requests\nJSON
+
+controller --> mediator : Send Request
+mediator --> validation : Pipeline
+validation --> createHandler
+validation --> getHandler
+validation --> getByIdHandler
+validation --> updateHandler
+validation --> deleteHandler
+
+createHandler --> repository
+getHandler --> repository
+getByIdHandler --> repository
+updateHandler --> repository
+deleteHandler --> repository
+
+repository --> db : Read/Write
+
+controller ..> models : uses
+mediator ..> models : uses
+validation ..> validationLib : uses
+
+@enduml

@@ -1,0 +1,58 @@
+@startuml Validation Flow Activity Diagram
+
+title Request Validation Flow - Activity Diagram
+
+skinparam activity {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    DiamondBackgroundColor LightYellow
+    DiamondBorderColor DarkGoldenRod
+}
+
+start
+
+:Receive HTTP Request;
+
+:Controller receives request;
+
+:Controller calls mediator.Send(request);
+
+:MediatR invokes ValidationBehavior;
+
+:Create ValidationContext from request;
+
+:Execute all registered validators;
+
+:Collect validation failures;
+
+if (Any validation failures?) then (yes)
+    :Create new Response object;
+
+    :Add error messages to response.Errors;
+
+    :Return response with errors;
+
+    :Controller returns 200 OK\nwith errors in body;
+
+    stop
+else (no)
+    :Call next() to continue pipeline;
+
+    :Request Handler receives request;
+
+    :Handler processes business logic;
+
+    :Handler calls Repository methods;
+
+    :Repository interacts with Database;
+
+    :Handler creates Response object;
+
+    :Return successful response;
+
+    :Controller returns 200 OK\nwith data;
+
+    stop
+endif
+
+@enduml

@@ -1,0 +1,124 @@
+@startuml SpecSync Class Diagram
+
+title SpecSync Domain Model Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+}
+
+package "SpecSync.Models.SoftwareRequirement" {
+    class SoftwareRequirement {
+        +SoftwareRequirementId : string
+        +ParentSoftwareRequirementId : string
+        +Description : string
+        +CanImplement : bool
+        +CanTest : bool
+        +Comments : List~Comment~
+    }
+
+    class Comment {
+        +CommentId : Guid
+        +ParentCommentId : Guid?
+        +Body : string
+        +Author : string
+        +Resolved : bool
+        +ParentComment : Comment?
+        +Comments : List~Comment~
+    }
+
+    class SoftwareRequirementDto {
+        +SoftwareRequirementId : string
+        +ParentSoftwareRequirementId : string
+        +Description : string
+        +CanImplement : bool
+        +CanTest : bool
+        +Comments : List~Comment~
+    }
+
+    SoftwareRequirement "1" *-- "0..*" Comment : contains
+    Comment "0..1" o-- "0..*" Comment : nested comments
+}
+
+package "Tag.Models.Tag" {
+    class Tag {
+        +TagId : Guid
+        +Name : string
+        +Description : string
+    }
+
+    class TagDto {
+        +TagId : Guid
+        +Name : string
+        +Description : string
+    }
+}
+
+package "SpecSync.Validation" {
+    abstract class ResponseBase {
+        +Errors : List~string~
+        +ResponseBase()
+    }
+}
+
+package "Requests" {
+    class CreateSoftwareRequirementRequest {
+        +SoftwareRequirementId : string
+        +ParentSoftwareRequirementId : string
+        +Description : string
+        +CanImplement : bool
+        +CanTest : bool
+        +Comments : List~Comment~
+    }
+
+    class UpdateSoftwareRequirementRequest {
+        +SoftwareRequirementId : string
+        +ParentSoftwareRequirementId : string
+        +Description : string
+        +CanImplement : bool
+        +CanTest : bool
+        +Comments : List~Comment~
+    }
+
+    class DeleteSoftwareRequirementRequest {
+        +SoftwareRequirementId : string
+    }
+
+    class GetSoftwareRequirementsRequest {
+    }
+
+    class GetSoftwareRequirementByIdRequest {
+        +SoftwareRequirementId : string
+    }
+}
+
+package "Responses" {
+    class CreateSoftwareRequirementResponse {
+        +SoftwareRequirement : SoftwareRequirementDto
+    }
+
+    class GetSoftwareRequirementsResponse {
+        +SoftwareRequirements : List~SoftwareRequirementDto~
+    }
+
+    class GetSoftwareRequirementByIdResponse {
+        +SoftwareRequirement : SoftwareRequirementDto
+    }
+
+    class UpdateSoftwareRequirementResponse {
+        +SoftwareRequirement : SoftwareRequirementDto
+    }
+
+    class DeleteSoftwareRequirementResponse {
+    }
+
+    CreateSoftwareRequirementResponse --|> ResponseBase
+    GetSoftwareRequirementsResponse --|> ResponseBase
+    GetSoftwareRequirementByIdResponse --|> ResponseBase
+    UpdateSoftwareRequirementResponse --|> ResponseBase
+    DeleteSoftwareRequirementResponse --|> ResponseBase
+}
+
+@enduml
