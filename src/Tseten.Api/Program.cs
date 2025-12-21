@@ -1,30 +1,58 @@
 // Copyright (c) Quinntyne Brown. All Rights Reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.EntityFrameworkCore;
-using Tseten.Models.SoftwareRequirement;
-using Tseten.Api.Data;
+using Tseten.Core;
+using Tseten.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddValidation(typeof(SoftwareRequirement));
+builder.Services.AddValidation(typeof(User));
 
-builder.Services.AddApiServices(corsPolicyBuilder =>
+builder.Services.AddInfrastructureServices(builder.Configuration.GetConnectionString("DefaultConnection")!);
+
+builder.Services.AddApiServices(
+    builder.Configuration,
+    corsPolicyBuilder =>
+    {
+        corsPolicyBuilder.WithOrigins(builder.Configuration["WithOrigins"]!.Split(','));
+    });
+
+builder.Services.AddSwaggerGen(options =>
 {
-    corsPolicyBuilder.WithOrigins(builder.Configuration["WithOrigins"]!.Split(','));
-}, builder.Configuration.GetConnectionString("DefaultConnection")!);
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token.",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
 
-builder.Services.AddSwaggerGen();
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
-// Ensure vector database is created
+// Seed the database
 using (var scope = app.Services.CreateScope())
 {
-    var vectorDbContext = scope.ServiceProvider.GetRequiredService<VectorDbContext>();
-    await vectorDbContext.Database.EnsureCreatedAsync();
+    var seedService = scope.ServiceProvider.GetRequiredService<SeedService>();
+    await seedService.SeedAsync();
 }
 
 if (app.Environment.IsDevelopment())
@@ -33,8 +61,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapControllers();
-
 app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 
 app.Run();

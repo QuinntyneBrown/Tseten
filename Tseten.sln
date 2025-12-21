@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9170D4D9-DA9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Validation", "src\Tseten.Validation\Tseten.Validation.csproj", "{CB8750A1-085B-4DDE-B6E3-4C00A3962FB2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Models", "src\Tseten.Models\Tseten.Models.csproj", "{9C3C97C9-0ED6-471C-87B1-D177150624B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Core", "src\Tseten.Core\Tseten.Core.csproj", "{9C3C97C9-0ED6-471C-87B1-D177150624B8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Api", "src\Tseten.Api\Tseten.Api.csproj", "{DEA82CDA-C6AD-490F-AF9B-CEC6F13A2C0A}"
 EndProject
@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5AB2E750-8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Api.Tests", "test\Tseten.Api.Tests\Tseten.Api.Tests.csproj", "{A0BAF93B-2B84-48FE-AEE6-0312972C6172}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tseten.Infrastructure", "src\Tseten.Infrastructure\Tseten.Infrastructure.csproj", "{2FDC47BD-3A42-414E-9B90-141D816DAD44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Infrastructure", "src\Tseten.Infrastructure\Tseten.Infrastructure.csproj", "{2FDC47BD-3A42-414E-9B90-141D816DAD44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

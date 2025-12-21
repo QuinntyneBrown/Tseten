@@ -1,0 +1,60 @@
+<!-- Copyright (c) Quinntyne Brown. All Rights Reserved. -->
+<!-- Licensed under the MIT License. See License.txt in the project root for license information. -->
+
+<div class="login">
+  <div class="login__container">
+    <h1 class="login__title">Tseten</h1>
+    <p class="login__subtitle">Software Requirements Management</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="handleLogin()" class="login__form">
+      @if (error) {
+        <div class="login__error">{{ error }}</div>
+      }
+
+      <div class="login__field">
+        <label for="username" class="login__label">Username</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          class="login__input"
+          placeholder="Enter your username"
+          autocomplete="username"
+        />
+        @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
+          <span class="login__field-error">Username is required</span>
+        }
+      </div>
+
+      <div class="login__field">
+        <label for="password" class="login__label">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="login__input"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        />
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <span class="login__field-error">Password is required</span>
+        }
+      </div>
+
+      <div class="login__checkbox">
+        <label class="login__checkbox-label">
+          <input type="checkbox" formControlName="rememberMe" />
+          <span>Remember me</span>
+        </label>
+      </div>
+
+      <button type="submit" class="login__button" [disabled]="loginForm.invalid">
+        Sign In
+      </button>
+    </form>
+
+    <div class="login__footer">
+      <a href="/create-account" class="login__link">Create an account</a>
+    </div>
+  </div>
+</div>

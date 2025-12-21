@@ -1,0 +1,99 @@
+// Copyright (c) Quinntyne Brown. All Rights Reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
+using Microsoft.EntityFrameworkCore;
+using Tseten.Core;
+
+namespace Tseten.Infrastructure;
+
+public class TsetenContext : DbContext, ITsetenContext
+{
+    public TsetenContext(DbContextOptions<TsetenContext> options) : base(options)
+    {
+    }
+
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<Privilege> Privileges => Set<Privilege>();
+    public DbSet<Profile> Profiles => Set<Profile>();
+    public DbSet<InvitationToken> InvitationTokens => Set<InvitationToken>();
+    public DbSet<SoftwareRequirementEmbedding> SoftwareRequirementEmbeddings => Set<SoftwareRequirementEmbedding>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("Users");
+            entity.HasKey(e => e.UserId);
+            entity.Property(e => e.UserId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Username).IsRequired().HasMaxLength(256);
+            entity.HasIndex(e => e.Username).IsUnique();
+            entity.Property(e => e.Password).IsRequired();
+            entity.Property(e => e.Salt).IsRequired();
+            entity.HasQueryFilter(e => !e.IsDeleted);
+            entity.HasMany(e => e.Roles)
+                .WithMany(e => e.Users)
+                .UsingEntity("UserRoles");
+            entity.HasMany(e => e.Profiles)
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.UserId);
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.ToTable("Roles");
+            entity.HasKey(e => e.RoleId);
+            entity.Property(e => e.RoleId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.HasMany(e => e.Privileges)
+                .WithOne(e => e.Role)
+                .HasForeignKey(e => e.RoleId);
+        });
+
+        modelBuilder.Entity<Privilege>(entity =>
+        {
+            entity.ToTable("Privileges");
+            entity.HasKey(e => e.PrivilegeId);
+            entity.Property(e => e.PrivilegeId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Aggregate).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.AccessRight).IsRequired();
+        });
+
+        modelBuilder.Entity<Profile>(entity =>
+        {
+            entity.ToTable("Profiles");
+            entity.HasKey(e => e.ProfileId);
+            entity.Property(e => e.ProfileId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Firstname).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Lastname).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<InvitationToken>(entity =>
+        {
+            entity.ToTable("InvitationTokens");
+            entity.HasKey(e => e.InvitationTokenId);
+            entity.Property(e => e.InvitationTokenId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Value).IsRequired().HasMaxLength(256);
+            entity.HasIndex(e => e.Value).IsUnique();
+            entity.Property(e => e.Type).IsRequired();
+        });
+
+        modelBuilder.Entity<SoftwareRequirementEmbedding>(entity =>
+        {
+            entity.ToTable("SoftwareRequirementEmbeddings");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.SoftwareRequirementId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(2000);
+            entity.Property(e => e.EmbeddingVector).IsRequired().HasColumnType("nvarchar(max)");
+            entity.Property(e => e.EmbeddingDimension).HasDefaultValue(384);
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
+            entity.HasIndex(e => e.SoftwareRequirementId).IsUnique();
+        });
+    }
+}
