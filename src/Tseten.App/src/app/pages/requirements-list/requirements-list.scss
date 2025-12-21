@@ -16,118 +16,99 @@
     margin: 0;
   }
 
-  &__add-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.2s;
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1rem;
 
-    &:hover {
-      opacity: 0.9;
+    p {
+      color: #666;
+      margin: 0;
     }
   }
 
-  &__loading,
-  &__error,
-  &__empty {
-    text-align: center;
-    padding: 3rem;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-
   &__error {
-    color: #dc2626;
+    mat-card-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 2rem;
+      color: #dc2626;
+    }
   }
 
   &__empty {
-    color: #666;
+    mat-card-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: #666;
 
-    p {
-      margin: 0.5rem 0;
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 1rem;
+        color: #ccc;
+      }
+
+      p {
+        margin: 0.25rem 0;
+      }
     }
   }
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1rem;
   }
 
   &__card {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 1.25rem;
     transition: box-shadow 0.2s;
 
     &:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
     }
   }
 
-  &__card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 0.75rem;
-  }
-
   &__card-id {
-    font-size: 0.75rem;
-    color: #999;
     font-family: monospace;
     word-break: break-all;
   }
 
-  &__card-badges {
-    display: flex;
-    gap: 0.5rem;
-    flex-shrink: 0;
-  }
-
-  &__badge {
-    font-size: 0.625rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-weight: 500;
-    text-transform: uppercase;
-
-    &--implement {
-      background: #d1fae5;
-      color: #065f46;
-    }
-
-    &--test {
-      background: #dbeafe;
-      color: #1e40af;
-    }
-  }
-
   &__card-description {
     font-size: 0.875rem;
-    color: #333;
     line-height: 1.5;
-    margin: 0 0 0.75rem 0;
+    margin: 0 0 1rem 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
-  &__card-ac {
-    border-top: 1px solid #eee;
-    padding-top: 0.75rem;
+  &__chips {
+    margin-bottom: 1rem;
   }
 
-  &__card-ac-count {
+  &__card-ac {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
     font-size: 0.75rem;
     color: #666;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
   }
 }

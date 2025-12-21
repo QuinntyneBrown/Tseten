@@ -4,47 +4,85 @@
 <div class="requirements-list">
   <div class="requirements-list__header">
     <h2 class="requirements-list__title">Software Requirements</h2>
-    <button class="requirements-list__add-btn">Add Requirement</button>
+    <button mat-raised-button color="primary">
+      <mat-icon>add</mat-icon>
+      Add Requirement
+    </button>
   </div>
 
   @if (loading) {
-    <div class="requirements-list__loading">Loading requirements...</div>
+    <div class="requirements-list__loading">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading requirements...</p>
+    </div>
   }
 
   @if (error) {
-    <div class="requirements-list__error">{{ error }}</div>
+    <mat-card class="requirements-list__error">
+      <mat-card-content>
+        <mat-icon color="warn">error</mat-icon>
+        <span>{{ error }}</span>
+      </mat-card-content>
+    </mat-card>
   }
 
   @if (!loading && !error) {
     @if (requirements.length === 0) {
-      <div class="requirements-list__empty">
-        <p>No software requirements found.</p>
-        <p>Click "Add Requirement" to create your first requirement.</p>
-      </div>
+      <mat-card class="requirements-list__empty">
+        <mat-card-content>
+          <mat-icon>inbox</mat-icon>
+          <p>No software requirements found.</p>
+          <p>Click "Add Requirement" to create your first requirement.</p>
+        </mat-card-content>
+      </mat-card>
     } @else {
       <div class="requirements-list__grid">
         @for (requirement of requirements; track requirement.softwareRequirementId) {
-          <div class="requirements-list__card">
-            <div class="requirements-list__card-header">
-              <span class="requirements-list__card-id">{{ requirement.softwareRequirementId }}</span>
-              <div class="requirements-list__card-badges">
+          <mat-card class="requirements-list__card">
+            <mat-card-header>
+              <mat-card-subtitle class="requirements-list__card-id">
+                {{ requirement.softwareRequirementId }}
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <p class="requirements-list__card-description">{{ requirement.description }}</p>
+
+              <mat-chip-set class="requirements-list__chips">
                 @if (requirement.canImplement) {
-                  <span class="requirements-list__badge requirements-list__badge--implement">Can Implement</span>
+                  <mat-chip color="primary" highlighted>
+                    <mat-icon matChipAvatar>code</mat-icon>
+                    Can Implement
+                  </mat-chip>
                 }
                 @if (requirement.canTest) {
-                  <span class="requirements-list__badge requirements-list__badge--test">Can Test</span>
+                  <mat-chip color="accent" highlighted>
+                    <mat-icon matChipAvatar>bug_report</mat-icon>
+                    Can Test
+                  </mat-chip>
                 }
-              </div>
-            </div>
-            <p class="requirements-list__card-description">{{ requirement.description }}</p>
-            @if (requirement.acceptanceCriteria && requirement.acceptanceCriteria.length > 0) {
-              <div class="requirements-list__card-ac">
-                <span class="requirements-list__card-ac-count">
-                  {{ requirement.acceptanceCriteria.length }} Acceptance Criteria
-                </span>
-              </div>
-            }
-          </div>
+              </mat-chip-set>
+
+              @if (requirement.acceptanceCriteria && requirement.acceptanceCriteria.length > 0) {
+                <mat-divider></mat-divider>
+                <div class="requirements-list__card-ac">
+                  <mat-icon>checklist</mat-icon>
+                  <span>{{ requirement.acceptanceCriteria.length }} Acceptance Criteria</span>
+                </div>
+              }
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button mat-button color="primary">
+                <mat-icon>visibility</mat-icon>
+                View
+              </button>
+              <button mat-button>
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+            </mat-card-actions>
+          </mat-card>
         }
       </div>
     }
