@@ -15,8 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5AB2E750-8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Api.Tests", "test\Tseten.Api.Tests\Tseten.Api.Tests.csproj", "{A0BAF93B-2B84-48FE-AEE6-0312972C6172}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Tseten.App", "src\Tseten.App\Tseten.App.esproj", "{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,12 +37,6 @@ Global
 		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,7 +46,6 @@ Global
 		{9C3C97C9-0ED6-471C-87B1-D177150624B8} = {9170D4D9-DA96-451A-B452-18BCED54FFBA}
 		{DEA82CDA-C6AD-490F-AF9B-CEC6F13A2C0A} = {9170D4D9-DA96-451A-B452-18BCED54FFBA}
 		{A0BAF93B-2B84-48FE-AEE6-0312972C6172} = {5AB2E750-8D8B-4D1C-801D-D2B9E502D9DC}
-		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71} = {9170D4D9-DA96-451A-B452-18BCED54FFBA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {67014C2B-921E-4E3B-AA5E-E819D0C32F7B}
