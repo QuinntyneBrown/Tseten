@@ -2,46 +2,46 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using MediatR;
+using Tseten.Core;
 using Tseten.Models.SoftwareRequirement;
 
 namespace Tseten.Api.RequestHandlers;
 
-public class CreateSoftwareRequirementHandler: IRequestHandler<CreateSoftwareRequirementRequest, CreateSoftwareRequirementResponse>
+public class CreateSoftwareRequirementHandler : IRequestHandler<CreateSoftwareRequirementRequest, CreateSoftwareRequirementResponse>
 {
     private readonly ILogger<CreateSoftwareRequirementHandler> _logger;
+    private readonly ITsetenContext _context;
 
-    private readonly ISoftwareRequirementsRepository _softwareRequirementsRepository;
-
-    public CreateSoftwareRequirementHandler(ILogger<CreateSoftwareRequirementHandler> logger,ISoftwareRequirementsRepository softwareRequirementsRepository){
+    public CreateSoftwareRequirementHandler(ILogger<CreateSoftwareRequirementHandler> logger, ITsetenContext context)
+    {
         ArgumentNullException.ThrowIfNull(logger);
-        ArgumentNullException.ThrowIfNull(softwareRequirementsRepository);
+        ArgumentNullException.ThrowIfNull(context);
 
         _logger = logger;
-        _softwareRequirementsRepository = softwareRequirementsRepository;
-
+        _context = context;
     }
 
-    public async Task<CreateSoftwareRequirementResponse> Handle(CreateSoftwareRequirementRequest request,CancellationToken cancellationToken)
+    public async Task<CreateSoftwareRequirementResponse> Handle(CreateSoftwareRequirementRequest request, CancellationToken cancellationToken)
     {
-        var softwareRequirement = new SoftwareRequirement()
+        var softwareRequirement = new SoftwareRequirement
         {
             SoftwareRequirementId = request.SoftwareRequirementId,
             ParentSoftwareRequirementId = request.ParentSoftwareRequirementId,
             Description = request.Description,
             CanImplement = request.CanImplement,
             CanTest = request.CanTest,
-            Comments = request.Comments,
+            Comments = request.Comments ?? [],
             AcceptanceCriteria = request.AcceptanceCriteria ?? []
         };
 
-        _softwareRequirementsRepository.Create(softwareRequirement);
+        _context.SoftwareRequirements.Add(softwareRequirement);
+        await _context.SaveChangesAsync(cancellationToken);
 
-        return new() { 
+        _logger.LogInformation("Created software requirement {SoftwareRequirementId}", softwareRequirement.SoftwareRequirementId);
 
-            SoftwareRequirement = softwareRequirement.ToDto(),
+        return new CreateSoftwareRequirementResponse
+        {
+            SoftwareRequirement = softwareRequirement.ToDto()
         };
-
     }
-
 }
-

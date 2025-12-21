@@ -1,0 +1,27 @@
+<!-- Copyright (c) Quinntyne Brown. All Rights Reserved. -->
+<!-- Licensed under the MIT License. See License.txt in the project root for license information. -->
+
+<div class="workspace">
+  <nav class="workspace__nav">
+    <div class="workspace__nav-brand">
+      <h1 class="workspace__nav-title">Tseten</h1>
+    </div>
+
+    <ul class="workspace__nav-menu">
+      <li class="workspace__nav-item">
+        <a routerLink="/workspace/requirements" class="workspace__nav-link">Requirements</a>
+      </li>
+    </ul>
+
+    <div class="workspace__nav-user">
+      @if (currentUser$ | async; as user) {
+        <span class="workspace__nav-username">{{ user.username }}</span>
+      }
+      <button class="workspace__nav-logout" (click)="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main class="workspace__main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

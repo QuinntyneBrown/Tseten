@@ -2,28 +2,40 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Tseten.Core;
 using Tseten.Models.SoftwareRequirement;
 
 namespace Tseten.Api.RequestHandlers;
 
-public class UpdateSoftwareRequirementHandler: IRequestHandler<UpdateSoftwareRequirementRequest, UpdateSoftwareRequirementResponse>
+public class UpdateSoftwareRequirementHandler : IRequestHandler<UpdateSoftwareRequirementRequest, UpdateSoftwareRequirementResponse>
 {
     private readonly ILogger<UpdateSoftwareRequirementHandler> _logger;
+    private readonly ITsetenContext _context;
 
-    private readonly ISoftwareRequirementsRepository _softwareRequirementsRepository;
-
-    public UpdateSoftwareRequirementHandler(ILogger<UpdateSoftwareRequirementHandler> logger,ISoftwareRequirementsRepository softwareRequirementsRepository){
+    public UpdateSoftwareRequirementHandler(ILogger<UpdateSoftwareRequirementHandler> logger, ITsetenContext context)
+    {
         ArgumentNullException.ThrowIfNull(logger);
-        ArgumentNullException.ThrowIfNull(softwareRequirementsRepository);
+        ArgumentNullException.ThrowIfNull(context);
 
         _logger = logger;
-        _softwareRequirementsRepository = softwareRequirementsRepository;
-
+        _context = context;
     }
 
-    public async Task<UpdateSoftwareRequirementResponse> Handle(UpdateSoftwareRequirementRequest request,CancellationToken cancellationToken)
+    public async Task<UpdateSoftwareRequirementResponse> Handle(UpdateSoftwareRequirementRequest request, CancellationToken cancellationToken)
     {
-        var softwareRequirement = _softwareRequirementsRepository.GetById(request.SoftwareRequirementId);
+        var softwareRequirement = await _context.SoftwareRequirements
+            .Include(sr => sr.AcceptanceCriteria)
+            .FirstOrDefaultAsync(sr => sr.SoftwareRequirementId == request.SoftwareRequirementId, cancellationToken);
+
+        if (softwareRequirement == null)
+        {
+            _logger.LogWarning("Software requirement {SoftwareRequirementId} not found for update", request.SoftwareRequirementId);
+            return new UpdateSoftwareRequirementResponse
+            {
+                Errors = ["Software requirement not found"]
+            };
+        }
 
         softwareRequirement.ParentSoftwareRequirementId = request.ParentSoftwareRequirementId;
         softwareRequirement.Description = request.Description;
@@ -31,12 +43,13 @@ public class UpdateSoftwareRequirementHandler: IRequestHandler<UpdateSoftwareReq
         softwareRequirement.CanTest = request.CanTest;
         softwareRequirement.AcceptanceCriteria = request.AcceptanceCriteria ?? [];
 
-        return new()
+        await _context.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation("Updated software requirement {SoftwareRequirementId}", softwareRequirement.SoftwareRequirementId);
+
+        return new UpdateSoftwareRequirementResponse
         {
             SoftwareRequirement = softwareRequirement.ToDto()
         };
-
     }
-
 }
-

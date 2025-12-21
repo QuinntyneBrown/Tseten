@@ -2,6 +2,8 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Tseten.Core;
 using Tseten.Models.SoftwareRequirement;
 using Tseten.Api.Services;
 
@@ -14,20 +16,20 @@ public class ImportEmbeddingsHandler : IRequestHandler<ImportEmbeddingsRequest, 
 {
     private readonly ILogger<ImportEmbeddingsHandler> _logger;
     private readonly IEmbeddingImportService _embeddingImportService;
-    private readonly ISoftwareRequirementsRepository _repository;
+    private readonly ITsetenContext _context;
 
     public ImportEmbeddingsHandler(
         ILogger<ImportEmbeddingsHandler> logger,
         IEmbeddingImportService embeddingImportService,
-        ISoftwareRequirementsRepository repository)
+        ITsetenContext context)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(embeddingImportService);
-        ArgumentNullException.ThrowIfNull(repository);
+        ArgumentNullException.ThrowIfNull(context);
 
         _logger = logger;
         _embeddingImportService = embeddingImportService;
-        _repository = repository;
+        _context = context;
     }
 
     public async Task<ImportEmbeddingsResponse> Handle(ImportEmbeddingsRequest request, CancellationToken cancellationToken)
@@ -36,7 +38,11 @@ public class ImportEmbeddingsHandler : IRequestHandler<ImportEmbeddingsRequest, 
 
         try
         {
-            var requirements = _repository.Get();
+            var requirements = await _context.SoftwareRequirements
+                .Include(sr => sr.Comments)
+                .Include(sr => sr.AcceptanceCriteria)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
             var count = requirements.Count;
 
             await _embeddingImportService.ImportSoftwareRequirementsAsync(requirements, cancellationToken);

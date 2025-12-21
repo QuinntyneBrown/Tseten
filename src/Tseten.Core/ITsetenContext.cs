@@ -1,0 +1,22 @@
+// Copyright (c) Quinntyne Brown. All Rights Reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
+using Microsoft.EntityFrameworkCore;
+using Tseten.Core;
+using Tseten.Models.SoftwareRequirement;
+
+namespace Tseten.Core;
+
+public interface ITsetenContext
+{
+    DbSet<User> Users { get; }
+    DbSet<Role> Roles { get; }
+    DbSet<Privilege> Privileges { get; }
+    DbSet<Profile> Profiles { get; }
+    DbSet<InvitationToken> InvitationTokens { get; }
+    DbSet<SoftwareRequirementEmbedding> SoftwareRequirementEmbeddings { get; }
+    DbSet<Tag> Tags { get; }
+    DbSet<SoftwareRequirement> SoftwareRequirements { get; }
+
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+}

@@ -1,0 +1,52 @@
+<!-- Copyright (c) Quinntyne Brown. All Rights Reserved. -->
+<!-- Licensed under the MIT License. See License.txt in the project root for license information. -->
+
+<div class="requirements-list">
+  <div class="requirements-list__header">
+    <h2 class="requirements-list__title">Software Requirements</h2>
+    <button class="requirements-list__add-btn">Add Requirement</button>
+  </div>
+
+  @if (loading) {
+    <div class="requirements-list__loading">Loading requirements...</div>
+  }
+
+  @if (error) {
+    <div class="requirements-list__error">{{ error }}</div>
+  }
+
+  @if (!loading && !error) {
+    @if (requirements.length === 0) {
+      <div class="requirements-list__empty">
+        <p>No software requirements found.</p>
+        <p>Click "Add Requirement" to create your first requirement.</p>
+      </div>
+    } @else {
+      <div class="requirements-list__grid">
+        @for (requirement of requirements; track requirement.softwareRequirementId) {
+          <div class="requirements-list__card">
+            <div class="requirements-list__card-header">
+              <span class="requirements-list__card-id">{{ requirement.softwareRequirementId }}</span>
+              <div class="requirements-list__card-badges">
+                @if (requirement.canImplement) {
+                  <span class="requirements-list__badge requirements-list__badge--implement">Can Implement</span>
+                }
+                @if (requirement.canTest) {
+                  <span class="requirements-list__badge requirements-list__badge--test">Can Test</span>
+                }
+              </div>
+            </div>
+            <p class="requirements-list__card-description">{{ requirement.description }}</p>
+            @if (requirement.acceptanceCriteria && requirement.acceptanceCriteria.length > 0) {
+              <div class="requirements-list__card-ac">
+                <span class="requirements-list__card-ac-count">
+                  {{ requirement.acceptanceCriteria.length }} Acceptance Criteria
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

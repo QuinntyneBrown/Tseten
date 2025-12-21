@@ -2,8 +2,8 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.EntityFrameworkCore;
+using Tseten.Core;
 using Tseten.Models.SoftwareRequirement;
-using Tseten.Api.Data;
 
 namespace Tseten.Api.Services;
 
@@ -12,25 +12,21 @@ namespace Tseten.Api.Services;
 /// </summary>
 public class EmbeddingImportService : IEmbeddingImportService
 {
-    private readonly VectorDbContext _vectorDbContext;
+    private readonly ITsetenContext _context;
     private readonly IEmbeddingService _embeddingService;
-    private readonly ISoftwareRequirementsRepository _repository;
     private readonly ILogger<EmbeddingImportService> _logger;
 
     public EmbeddingImportService(
-        VectorDbContext vectorDbContext,
+        ITsetenContext context,
         IEmbeddingService embeddingService,
-        ISoftwareRequirementsRepository repository,
         ILogger<EmbeddingImportService> logger)
     {
-        ArgumentNullException.ThrowIfNull(vectorDbContext);
+        ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(embeddingService);
-        ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _vectorDbContext = vectorDbContext;
+        _context = context;
         _embeddingService = embeddingService;
-        _repository = repository;
         _logger = logger;
     }
 
@@ -41,7 +37,7 @@ public class EmbeddingImportService : IEmbeddingImportService
         _logger.LogInformation("Importing software requirement {RequirementId}", requirement.SoftwareRequirementId);
 
         // Check if embedding already exists
-        var existing = await _vectorDbContext.SoftwareRequirementEmbeddings
+        var existing = await _context.SoftwareRequirementEmbeddings
             .FirstOrDefaultAsync(e => e.SoftwareRequirementId == requirement.SoftwareRequirementId, cancellationToken);
 
         // Generate text for embedding (combine description with acceptance criteria)
@@ -69,10 +65,10 @@ public class EmbeddingImportService : IEmbeddingImportService
                 UpdatedAt = DateTime.UtcNow
             };
 
-            await _vectorDbContext.SoftwareRequirementEmbeddings.AddAsync(embeddingEntity, cancellationToken);
+            _context.SoftwareRequirementEmbeddings.Add(embeddingEntity);
         }
 
-        await _vectorDbContext.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("Successfully imported software requirement {RequirementId}", requirement.SoftwareRequirementId);
     }
@@ -107,13 +103,13 @@ public class EmbeddingImportService : IEmbeddingImportService
 
         _logger.LogInformation("Removing software requirement {RequirementId} from vector database", softwareRequirementId);
 
-        var existing = await _vectorDbContext.SoftwareRequirementEmbeddings
+        var existing = await _context.SoftwareRequirementEmbeddings
             .FirstOrDefaultAsync(e => e.SoftwareRequirementId == softwareRequirementId, cancellationToken);
 
         if (existing != null)
         {
-            _vectorDbContext.SoftwareRequirementEmbeddings.Remove(existing);
-            await _vectorDbContext.SaveChangesAsync(cancellationToken);
+            _context.SoftwareRequirementEmbeddings.Remove(existing);
+            await _context.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Successfully removed software requirement {RequirementId}", softwareRequirementId);
         }
@@ -127,7 +123,11 @@ public class EmbeddingImportService : IEmbeddingImportService
     {
         _logger.LogInformation("Starting full sync of software requirements to vector database");
 
-        var allRequirements = _repository.Get();
+        var allRequirements = await _context.SoftwareRequirements
+            .Include(sr => sr.Comments)
+            .Include(sr => sr.AcceptanceCriteria)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
 
         _logger.LogInformation("Found {Count} software requirements to sync", allRequirements.Count);
 
