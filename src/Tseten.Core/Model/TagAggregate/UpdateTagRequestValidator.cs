@@ -3,15 +3,15 @@
 
 using FluentValidation;
 
-namespace Tag.Models.Tag;
+namespace Tseten.Core;
 
-public class CreateTagRequestValidator: AbstractValidator<CreateTagRequest>
+public class UpdateTagRequestValidator : AbstractValidator<UpdateTagRequest>
 {
-    public CreateTagRequestValidator(){
+    public UpdateTagRequestValidator()
+    {
+        RuleFor(x => x.TagId).NotNull();
         RuleFor(x => x.Name).NotNull().NotEmpty();
         RuleFor(x => x.Description).NotNull().NotEmpty();
-
     }
-
 }
 

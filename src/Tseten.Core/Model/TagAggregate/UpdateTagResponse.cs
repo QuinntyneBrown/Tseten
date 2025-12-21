@@ -1,8 +1,12 @@
 // Copyright (c) Quinntyne Brown. All Rights Reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using MediatR;
+using Tseten.Validation;
 
-namespace Tag.Models.Tag;
+namespace Tseten.Core;
 
-public class GetTagsRequest: IRequest<GetTagsResponse> { }
+public class UpdateTagResponse : ResponseBase
+{
+    public TagDto? Tag { get; set; }
+}
+

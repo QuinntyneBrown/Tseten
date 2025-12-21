@@ -25,10 +25,14 @@ public class GetSoftwareRequirementByIdHandler: IRequestHandler<GetSoftwareRequi
     {
         var softwareRequirement = _softwareRequirementsRepository.GetById(request.SoftwareRequirementId);
 
+        if (softwareRequirement == null)
+        {
+            return new GetSoftwareRequirementByIdResponse();
+        }
+
         return new GetSoftwareRequirementByIdResponse()
         {
-            SoftwareRequirement = softwareRequirement
-            .ToDto()
+            SoftwareRequirement = softwareRequirement.ToDto()
         };
 
     }

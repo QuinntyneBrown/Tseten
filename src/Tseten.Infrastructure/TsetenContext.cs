@@ -18,6 +18,7 @@ public class TsetenContext : DbContext, ITsetenContext
     public DbSet<Profile> Profiles => Set<Profile>();
     public DbSet<InvitationToken> InvitationTokens => Set<InvitationToken>();
     public DbSet<SoftwareRequirementEmbedding> SoftwareRequirementEmbeddings => Set<SoftwareRequirementEmbedding>();
+    public DbSet<Tag> Tags => Set<Tag>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -94,6 +95,16 @@ public class TsetenContext : DbContext, ITsetenContext
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
             entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
             entity.HasIndex(e => e.SoftwareRequirementId).IsUnique();
+        });
+
+        modelBuilder.Entity<Tag>(entity =>
+        {
+            entity.ToTable("Tags");
+            entity.HasKey(e => e.TagId);
+            entity.Property(e => e.TagId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.Property(e => e.Description).HasMaxLength(500);
         });
     }
 }

@@ -13,7 +13,7 @@ public interface ISoftwareRequirementsRepository
 
     void Delete(string softwareRequirementId);
 
-    SoftwareRequirement GetById(string softwareRequirementId);
+    SoftwareRequirement? GetById(string softwareRequirementId);
 
     List<SoftwareRequirement> Get();
 }

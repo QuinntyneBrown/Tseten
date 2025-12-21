@@ -37,7 +37,11 @@ public class SoftwareRequirementsRepository: ISoftwareRequirementsRepository
 
     public void Delete(string softwareRequirementId)
     {
-        throw new NotImplementedException();
+        var document = _database.GetDefaultCollection().GetDocument(softwareRequirementId);
+        if (document != null)
+        {
+            _database.GetDefaultCollection().Delete(document);
+        }
     }
 
     public List<SoftwareRequirement> Get()
@@ -59,14 +63,26 @@ public class SoftwareRequirementsRepository: ISoftwareRequirementsRepository
         return result;
     }
 
-    public SoftwareRequirement GetById(string softwareRequirementId)
+    public SoftwareRequirement? GetById(string softwareRequirementId)
     {
-        throw new NotImplementedException();
+        var document = _database.GetDefaultCollection().GetDocument(softwareRequirementId);
+        if (document == null)
+        {
+            return null;
+        }
+
+        var json = document.ToJSON();
+        var softwareRequirement = JsonSerializer.Deserialize<SoftwareRequirement>(json, _options);
+        return softwareRequirement;
     }
 
     public void Update(SoftwareRequirement softwareRequirement)
     {
-        throw new NotImplementedException();
+        var mutableDocument = new MutableDocument(
+            softwareRequirement.SoftwareRequirementId,
+            JsonSerializer.Serialize(softwareRequirement, _options));
+
+        _database.GetDefaultCollection().Save(mutableDocument);
     }
 }
 

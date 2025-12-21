@@ -3,14 +3,13 @@
 
 using FluentValidation;
 
-namespace Tag.Models.Tag;
+namespace Tseten.Core;
 
-public class DeleteTagRequestValidator: AbstractValidator<DeleteTagRequest>
+public class DeleteTagRequestValidator : AbstractValidator<DeleteTagRequest>
 {
-    public DeleteTagRequestValidator(){
+    public DeleteTagRequestValidator()
+    {
         RuleFor(x => x.TagId).NotNull();
-
     }
-
 }
 

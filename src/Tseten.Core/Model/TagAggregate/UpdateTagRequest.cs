@@ -3,12 +3,12 @@
 
 using MediatR;
 
-namespace Tag.Models.Tag;
+namespace Tseten.Core;
 
-public class UpdateTagRequest: IRequest<UpdateTagResponse>
+public class UpdateTagRequest : IRequest<UpdateTagResponse>
 {
     public Guid TagId { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
 }
 

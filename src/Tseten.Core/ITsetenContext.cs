@@ -14,6 +14,7 @@ public interface ITsetenContext
     DbSet<Profile> Profiles { get; }
     DbSet<InvitationToken> InvitationTokens { get; }
     DbSet<SoftwareRequirementEmbedding> SoftwareRequirementEmbeddings { get; }
+    DbSet<Tag> Tags { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

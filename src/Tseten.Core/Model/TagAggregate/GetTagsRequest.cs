@@ -3,10 +3,6 @@
 
 using MediatR;
 
-namespace Tag.Models.Tag;
+namespace Tseten.Core;
 
-public class DeleteTagRequest: IRequest<DeleteTagResponse>
-{
-    public Guid TagId { get; set; }
-}
-
+public class GetTagsRequest : IRequest<GetTagsResponse> { }

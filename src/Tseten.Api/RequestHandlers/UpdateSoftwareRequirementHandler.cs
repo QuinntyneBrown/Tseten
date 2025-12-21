@@ -25,11 +25,21 @@ public class UpdateSoftwareRequirementHandler: IRequestHandler<UpdateSoftwareReq
     {
         var softwareRequirement = _softwareRequirementsRepository.GetById(request.SoftwareRequirementId);
 
+        if (softwareRequirement == null)
+        {
+            return new UpdateSoftwareRequirementResponse
+            {
+                Errors = ["Software requirement not found"]
+            };
+        }
+
         softwareRequirement.ParentSoftwareRequirementId = request.ParentSoftwareRequirementId;
         softwareRequirement.Description = request.Description;
         softwareRequirement.CanImplement = request.CanImplement;
         softwareRequirement.CanTest = request.CanTest;
         softwareRequirement.AcceptanceCriteria = request.AcceptanceCriteria ?? [];
+
+        _softwareRequirementsRepository.Update(softwareRequirement);
 
         return new()
         {

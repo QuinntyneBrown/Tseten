@@ -1,10 +1,12 @@
 // Copyright (c) Quinntyne Brown. All Rights Reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-namespace Tag.Models.Tag;
+using MediatR;
 
-public class GetTagsResponse
+namespace Tseten.Core;
+
+public class DeleteTagRequest : IRequest<DeleteTagResponse>
 {
-    public List<TagDto> Tags { get; set; }
+    public Guid TagId { get; set; }
 }
 
