@@ -1,12 +1,10 @@
 // Copyright (c) Quinntyne Brown. All Rights Reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Couchbase.Lite;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Tseten.Api;
 using Tseten.Api.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -18,13 +16,8 @@ public static class ConfigureApiServices
         IConfiguration configuration,
         Action<CorsPolicyBuilder> configureCorsPolicyBuilder)
     {
-        services.AddSingleton<ISoftwareRequirementsRepository, SoftwareRequirementsRepository>();
         services.AddControllers();
         services.AddHttpContextAccessor();
-
-        // Couchbase.Lite for document storage
-        var db = new Database("tseten-software-requirements");
-        services.AddSingleton(db);
 
         // Register embedding services
         services.AddSingleton<IEmbeddingService, EmbeddingService>();

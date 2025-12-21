@@ -3,6 +3,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Tseten.Core;
+using Tseten.Models.SoftwareRequirement;
 
 namespace Tseten.Infrastructure;
 
@@ -19,6 +20,7 @@ public class TsetenContext : DbContext, ITsetenContext
     public DbSet<InvitationToken> InvitationTokens => Set<InvitationToken>();
     public DbSet<SoftwareRequirementEmbedding> SoftwareRequirementEmbeddings => Set<SoftwareRequirementEmbedding>();
     public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<SoftwareRequirement> SoftwareRequirements => Set<SoftwareRequirement>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -105,6 +107,48 @@ public class TsetenContext : DbContext, ITsetenContext
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.HasIndex(e => e.Name).IsUnique();
             entity.Property(e => e.Description).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<SoftwareRequirement>(entity =>
+        {
+            entity.ToTable("SoftwareRequirements");
+            entity.HasKey(e => e.SoftwareRequirementId);
+            entity.Property(e => e.SoftwareRequirementId).HasMaxLength(100);
+            entity.Property(e => e.ParentSoftwareRequirementId).HasMaxLength(100);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(4000);
+            entity.HasMany(e => e.Comments)
+                .WithOne()
+                .HasForeignKey("SoftwareRequirementId")
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(e => e.AcceptanceCriteria)
+                .WithOne()
+                .HasForeignKey("SoftwareRequirementId")
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Comment>(entity =>
+        {
+            entity.ToTable("Comments");
+            entity.HasKey(e => e.CommentId);
+            entity.Property(e => e.CommentId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Body).IsRequired().HasMaxLength(4000);
+            entity.Property(e => e.Author).IsRequired().HasMaxLength(256);
+            entity.HasMany(e => e.Comments)
+                .WithOne(e => e.ParentComment)
+                .HasForeignKey(e => e.ParentCommentId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<AcceptanceCriteria>(entity =>
+        {
+            entity.ToTable("AcceptanceCriteria");
+            entity.HasKey(e => e.AcceptanceCriteriaId);
+            entity.Property(e => e.AcceptanceCriteriaId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Given).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.When).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.Then).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.Notes).HasMaxLength(2000);
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
         });
     }
 }

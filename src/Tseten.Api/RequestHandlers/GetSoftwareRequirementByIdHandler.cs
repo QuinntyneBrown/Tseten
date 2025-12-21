@@ -2,40 +2,45 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Tseten.Core;
 using Tseten.Models.SoftwareRequirement;
 
 namespace Tseten.Api.RequestHandlers;
 
-public class GetSoftwareRequirementByIdHandler: IRequestHandler<GetSoftwareRequirementByIdRequest, GetSoftwareRequirementByIdResponse>
+public class GetSoftwareRequirementByIdHandler : IRequestHandler<GetSoftwareRequirementByIdRequest, GetSoftwareRequirementByIdResponse>
 {
     private readonly ILogger<GetSoftwareRequirementByIdHandler> _logger;
+    private readonly ITsetenContext _context;
 
-    private readonly ISoftwareRequirementsRepository _softwareRequirementsRepository;
-
-    public GetSoftwareRequirementByIdHandler(ILogger<GetSoftwareRequirementByIdHandler> logger,ISoftwareRequirementsRepository softwareRequirementsRepository){
+    public GetSoftwareRequirementByIdHandler(ILogger<GetSoftwareRequirementByIdHandler> logger, ITsetenContext context)
+    {
         ArgumentNullException.ThrowIfNull(logger);
-        ArgumentNullException.ThrowIfNull(softwareRequirementsRepository);
+        ArgumentNullException.ThrowIfNull(context);
 
         _logger = logger;
-        _softwareRequirementsRepository = softwareRequirementsRepository;
-
+        _context = context;
     }
 
-    public async Task<GetSoftwareRequirementByIdResponse> Handle(GetSoftwareRequirementByIdRequest request,CancellationToken cancellationToken)
+    public async Task<GetSoftwareRequirementByIdResponse> Handle(GetSoftwareRequirementByIdRequest request, CancellationToken cancellationToken)
     {
-        var softwareRequirement = _softwareRequirementsRepository.GetById(request.SoftwareRequirementId);
+        var softwareRequirement = await _context.SoftwareRequirements
+            .Include(sr => sr.Comments)
+            .Include(sr => sr.AcceptanceCriteria)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(sr => sr.SoftwareRequirementId == request.SoftwareRequirementId, cancellationToken);
 
         if (softwareRequirement == null)
         {
+            _logger.LogWarning("Software requirement {SoftwareRequirementId} not found", request.SoftwareRequirementId);
             return new GetSoftwareRequirementByIdResponse();
         }
 
-        return new GetSoftwareRequirementByIdResponse()
+        _logger.LogInformation("Retrieved software requirement {SoftwareRequirementId}", request.SoftwareRequirementId);
+
+        return new GetSoftwareRequirementByIdResponse
         {
             SoftwareRequirement = softwareRequirement.ToDto()
         };
-
     }
-
 }
-

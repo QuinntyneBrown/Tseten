@@ -3,8 +3,8 @@
 
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tseten.Core;
 using Tseten.Models.SoftwareRequirement;
-using Tseten.Api.Data;
 using Tseten.Api.Services;
 
 namespace Tseten.Api.RequestHandlers;
@@ -16,24 +16,20 @@ namespace Tseten.Api.RequestHandlers;
 public class SearchSoftwareRequirementsHandler : IRequestHandler<SearchSoftwareRequirementsRequest, SearchSoftwareRequirementsResponse>
 {
     private readonly ILogger<SearchSoftwareRequirementsHandler> _logger;
-    private readonly VectorDbContext _vectorDbContext;
-    private readonly ISoftwareRequirementsRepository _softwareRequirementsRepository;
+    private readonly ITsetenContext _context;
     private readonly IEmbeddingService _embeddingService;
 
     public SearchSoftwareRequirementsHandler(
         ILogger<SearchSoftwareRequirementsHandler> logger,
-        VectorDbContext vectorDbContext,
-        ISoftwareRequirementsRepository softwareRequirementsRepository,
+        ITsetenContext context,
         IEmbeddingService embeddingService)
     {
         ArgumentNullException.ThrowIfNull(logger);
-        ArgumentNullException.ThrowIfNull(vectorDbContext);
-        ArgumentNullException.ThrowIfNull(softwareRequirementsRepository);
+        ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(embeddingService);
 
         _logger = logger;
-        _vectorDbContext = vectorDbContext;
-        _softwareRequirementsRepository = softwareRequirementsRepository;
+        _context = context;
         _embeddingService = embeddingService;
     }
 
@@ -49,7 +45,7 @@ public class SearchSoftwareRequirementsHandler : IRequestHandler<SearchSoftwareR
             var queryEmbedding = await _embeddingService.GenerateEmbeddingAsync(request.Query, cancellationToken);
 
             // Get all embeddings from the database
-            var allEmbeddings = await _vectorDbContext.SoftwareRequirementEmbeddings
+            var allEmbeddings = await _context.SoftwareRequirementEmbeddings
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
@@ -65,7 +61,11 @@ public class SearchSoftwareRequirementsHandler : IRequestHandler<SearchSoftwareR
                 .ToList();
 
             // Get all software requirements to join with embeddings
-            var allRequirements = _softwareRequirementsRepository.Get();
+            var allRequirements = await _context.SoftwareRequirements
+                .Include(sr => sr.Comments)
+                .Include(sr => sr.AcceptanceCriteria)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
             var requirementsDict = allRequirements.ToDictionary(r => r.SoftwareRequirementId);
 
             // Apply additional filters

@@ -3,6 +3,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Tseten.Core;
+using Tseten.Models.SoftwareRequirement;
 
 namespace Tseten.Core;
 
@@ -15,6 +16,7 @@ public interface ITsetenContext
     DbSet<InvitationToken> InvitationTokens { get; }
     DbSet<SoftwareRequirementEmbedding> SoftwareRequirementEmbeddings { get; }
     DbSet<Tag> Tags { get; }
+    DbSet<SoftwareRequirement> SoftwareRequirements { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
