@@ -55,9 +55,9 @@ public class AcceptanceCriteriaTests
 
     [Theory]
     [InlineData(AcceptanceCriteriaStatus.Pending, 0)]
-    [InlineData(AcceptanceCriteriaStatus.InProgress, 1)]
-    [InlineData(AcceptanceCriteriaStatus.Passed, 2)]
-    [InlineData(AcceptanceCriteriaStatus.Failed, 3)]
+    [InlineData(AcceptanceCriteriaStatus.Passed, 1)]
+    [InlineData(AcceptanceCriteriaStatus.Failed, 2)]
+    [InlineData(AcceptanceCriteriaStatus.NotApplicable, 3)]
     public void AcceptanceCriteriaStatus_ShouldHaveCorrectValues(AcceptanceCriteriaStatus status, int expectedValue)
     {
         // Assert

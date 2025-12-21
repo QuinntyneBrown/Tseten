@@ -55,7 +55,7 @@ public class EmbeddingImportService : IEmbeddingImportService
         }
         else
         {
-            var embeddingEntity = new SoftwareRequirementEmbedding
+            var embeddingEntity = new Core.SoftwareRequirementEmbedding
             {
                 SoftwareRequirementId = requirement.SoftwareRequirementId,
                 Description = requirement.Description,

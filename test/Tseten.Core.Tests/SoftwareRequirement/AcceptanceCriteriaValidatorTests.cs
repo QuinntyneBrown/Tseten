@@ -107,9 +107,9 @@ public class AcceptanceCriteriaValidatorTests
 
     [Theory]
     [InlineData(AcceptanceCriteriaStatus.Pending)]
-    [InlineData(AcceptanceCriteriaStatus.InProgress)]
     [InlineData(AcceptanceCriteriaStatus.Passed)]
     [InlineData(AcceptanceCriteriaStatus.Failed)]
+    [InlineData(AcceptanceCriteriaStatus.NotApplicable)]
     public async Task Validate_WithValidStatus_ShouldPass(AcceptanceCriteriaStatus status)
     {
         // Arrange

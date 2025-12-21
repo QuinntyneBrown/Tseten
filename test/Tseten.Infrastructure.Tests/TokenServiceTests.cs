@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Tseten.Core;
 using Tseten.Infrastructure;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Tseten.Infrastructure.Tests;
 
@@ -78,8 +79,8 @@ public class TokenServiceTests
         var jwtToken = handler.ReadJwtToken(token);
 
         // Assert
-        jwtToken.Claims.Should().Contain(c => c.Type == "nameid" && c.Value == userId.ToString());
-        jwtToken.Claims.Should().Contain(c => c.Type == "unique_name" && c.Value == "testuser@example.com");
+        jwtToken.Claims.Should().Contain(c => c.Type == ClaimTypes.NameIdentifier && c.Value == userId.ToString());
+        jwtToken.Claims.Should().Contain(c => c.Type == ClaimTypes.Name && c.Value == "testuser@example.com");
     }
 
     [Fact]
@@ -108,7 +109,7 @@ public class TokenServiceTests
         var jwtToken = handler.ReadJwtToken(token);
 
         // Assert
-        jwtToken.Claims.Should().Contain(c => c.Type == "role" && c.Value == "Admin");
+        jwtToken.Claims.Should().Contain(c => c.Type == ClaimTypes.Role && c.Value == "Admin");
     }
 
     [Fact]

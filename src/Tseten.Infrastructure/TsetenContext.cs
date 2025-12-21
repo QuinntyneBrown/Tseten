@@ -18,7 +18,7 @@ public class TsetenContext : DbContext, ITsetenContext
     public DbSet<Privilege> Privileges => Set<Privilege>();
     public DbSet<Profile> Profiles => Set<Profile>();
     public DbSet<InvitationToken> InvitationTokens => Set<InvitationToken>();
-    public DbSet<SoftwareRequirementEmbedding> SoftwareRequirementEmbeddings => Set<SoftwareRequirementEmbedding>();
+    public DbSet<Core.SoftwareRequirementEmbedding> SoftwareRequirementEmbeddings => Set<Core.SoftwareRequirementEmbedding>();
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<SoftwareRequirement> SoftwareRequirements => Set<SoftwareRequirement>();
 
@@ -85,7 +85,7 @@ public class TsetenContext : DbContext, ITsetenContext
             entity.Property(e => e.Type).IsRequired();
         });
 
-        modelBuilder.Entity<SoftwareRequirementEmbedding>(entity =>
+        modelBuilder.Entity<Core.SoftwareRequirementEmbedding>(entity =>
         {
             entity.ToTable("SoftwareRequirementEmbeddings");
             entity.HasKey(e => e.Id);
