@@ -3,6 +3,7 @@
 
 using FluentValidation;
 using MediatR;
+using Tseten.Core;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,6 @@ public static class ConfigureValidationServices
     public static void AddValidation(this IServiceCollection services, Type markerType)
     {
         services.AddValidatorsFromAssemblyContaining(markerType);
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Tseten.Validation.ValidationBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
     }
 }

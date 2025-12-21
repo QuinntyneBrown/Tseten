@@ -4,7 +4,7 @@
 using FluentValidation;
 using MediatR;
 
-namespace Tseten.Validation;
+namespace Tseten.Core;
 
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
