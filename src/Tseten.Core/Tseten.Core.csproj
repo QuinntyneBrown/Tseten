@@ -7,10 +7,9 @@
     <NoWarn>1998,4014,,SA1101,SA1600,,SA1200,SA1633,1591,SA1309</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Tseten.Validation\Tseten.Validation.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
     <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
   </ItemGroup>
 </Project>
