@@ -19,7 +19,7 @@ The Validation feature provides a cross-cutting concern implementation for reque
 ### Project Structure
 
 ```
-src/SpecSync.Validation/
+src/Tseten.Validation/
     ConfigureServices.cs      # DI registration extension
     ResponseBase.cs           # Base response with errors
     ValidationBehavior.cs     # MediatR pipeline behavior
@@ -43,7 +43,7 @@ Provides a base class for all API responses that includes an errors collection f
 ### Implementation
 
 ```csharp
-namespace SpecSync.Validation;
+namespace Tseten.Validation;
 
 public class ResponseBase
 {
@@ -98,7 +98,7 @@ Implements a MediatR pipeline behavior that intercepts all requests, validates t
 ### Implementation
 
 ```csharp
-namespace SpecSync.Validation;
+namespace Tseten.Validation;
 
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
