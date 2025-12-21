@@ -29,6 +29,7 @@ public class UpdateSoftwareRequirementHandler: IRequestHandler<UpdateSoftwareReq
         softwareRequirement.Description = request.Description;
         softwareRequirement.CanImplement = request.CanImplement;
         softwareRequirement.CanTest = request.CanTest;
+        softwareRequirement.AcceptanceCriteria = request.AcceptanceCriteria ?? [];
 
         return new()
         {

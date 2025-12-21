@@ -15,6 +15,7 @@ public static class SoftwareRequirementExtensions
             CanImplement = softwareRequirement.CanImplement,
             CanTest = softwareRequirement.CanTest,
             Comments = softwareRequirement.Comments,
+            AcceptanceCriteria = softwareRequirement.AcceptanceCriteria?.ToDto(),
         };
 
     }
