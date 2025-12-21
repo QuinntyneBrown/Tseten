@@ -1,1 +1,1 @@
-# SpecSync
+# Tseten
