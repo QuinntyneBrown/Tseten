@@ -11,5 +11,6 @@ public class SoftwareRequirement
     public bool CanImplement { get; set; }
     public bool CanTest { get; set; }
     public List<Comment> Comments { get; set; } = [];
+    public List<AcceptanceCriteria> AcceptanceCriteria { get; set; } = [];
 }
 

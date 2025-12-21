@@ -7,12 +7,12 @@ namespace SpecSync.Models.SoftwareRequirement;
 
 public class UpdateSoftwareRequirementRequestValidator: AbstractValidator<UpdateSoftwareRequirementRequest>
 {
-    public UpdateSoftwareRequirementRequestValidator(){
+    public UpdateSoftwareRequirementRequestValidator()
+    {
         RuleFor(x => x.SoftwareRequirementId).NotNull().NotEmpty();
         RuleFor(x => x.ParentSoftwareRequirementId).NotNull().NotEmpty();
         RuleFor(x => x.Description).NotNull().NotEmpty();
-
+        RuleForEach(x => x.AcceptanceCriteria).SetValidator(new AcceptanceCriteriaValidator());
     }
-
 }
 

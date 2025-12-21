@@ -30,7 +30,8 @@ public class CreateSoftwareRequirementHandler: IRequestHandler<CreateSoftwareReq
             Description = request.Description,
             CanImplement = request.CanImplement,
             CanTest = request.CanTest,
-            Comments = request.Comments
+            Comments = request.Comments,
+            AcceptanceCriteria = request.AcceptanceCriteria ?? []
         };
 
         _softwareRequirementsRepository.Create(softwareRequirement);

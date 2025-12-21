@@ -10,6 +10,7 @@ public class CreateSoftwareRequirementRequestValidator: AbstractValidator<Create
     public CreateSoftwareRequirementRequestValidator()
     {
         RuleFor(x => x.Description).NotNull().NotEmpty();
+        RuleForEach(x => x.AcceptanceCriteria).SetValidator(new AcceptanceCriteriaValidator());
     }
 }
 

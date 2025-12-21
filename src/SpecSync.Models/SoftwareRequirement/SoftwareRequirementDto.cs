@@ -11,5 +11,6 @@ public class SoftwareRequirementDto
     public bool CanImplement { get; set; }
     public bool CanTest { get; set; }
     public List<Comment>? Comments { get; set; }
+    public List<AcceptanceCriteriaDto>? AcceptanceCriteria { get; set; }
 }
 
