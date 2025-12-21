@@ -1,13 +1,13 @@
 {
   "microservices": [
     {
-      "name": "SpecSync.SoftwareRequirements.Api",
+      "name": "Tseten.SoftwareRequirements.Api",
       "boundedContextName": "SoftwareRequirements",
       "kind": "Api",
-      "productName": "SpecSync"
+      "productName": "Tseten"
     }
   ],
-  "productName": "SpecSync",
+  "productName": "Tseten",
   "boundedContexts": [
     {
       "name": "SoftwareRequirements",
@@ -49,19 +49,19 @@
               "name": "CreateSoftwareRequirement",
               "kind": "Create",
               "aggregate": null,
-              "productName": "SpecSync"
+              "productName": "Tseten"
             },
             {
               "name": "UpdateSoftwareRequirement",
               "kind": "Update",
               "aggregate": null,
-              "productName": "SpecSync"
+              "productName": "Tseten"
             },
             {
               "name": "DeleteSoftwareRequirement",
               "kind": "Delete",
               "aggregate": null,
-              "productName": "SpecSync"
+              "productName": "Tseten"
             }
           ],
           "queries": [
@@ -106,7 +106,7 @@
         }
       ],
       "handles": [],
-      "productName": "SpecSync"
+      "productName": "Tseten"
     }
   ],
   "messages": []
