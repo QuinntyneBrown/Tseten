@@ -1,0 +1,47 @@
+@startuml C4 Context Diagram
+
+title SpecSync System - C4 Context Diagram
+
+skinparam rectangle {
+    BackgroundColor<<person>> LightSkyBlue
+    BorderColor<<person>> DarkBlue
+    BackgroundColor<<system>> LightBlue
+    BorderColor<<system>> DarkBlue
+    BackgroundColor<<external>> LightGray
+    BorderColor<<external>> Gray
+}
+
+rectangle "Software Engineer" <<person>> as user {
+}
+note right of user
+    A user who manages
+    software requirements
+    and specifications
+end note
+
+rectangle "SpecSync System" <<system>> as specsync {
+}
+note bottom of specsync
+    Software Requirements
+    Management System
+
+    Allows users to create,
+    manage, and track
+    software requirements
+    with hierarchical
+    relationships and
+    collaborative comments
+end note
+
+rectangle "Couchbase Lite Database" <<external>> as database {
+}
+note right of database
+    Embedded NoSQL
+    database storing
+    requirements data
+end note
+
+user --> specsync : Uses to manage\nrequirements
+specsync --> database : Reads from\nand writes to
+
+@enduml

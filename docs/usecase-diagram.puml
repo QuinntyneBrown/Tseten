@@ -1,0 +1,67 @@
+@startuml SpecSync Use Case Diagram
+
+title SpecSync Software Requirements Management - Use Cases
+
+skinparam actorStyle awesome
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+}
+
+left to right direction
+
+actor "Software Engineer" as engineer
+
+rectangle "SpecSync System" {
+    usecase "Create Software Requirement" as UC1
+    usecase "View All Requirements" as UC2
+    usecase "View Requirement Details" as UC3
+    usecase "Update Requirement" as UC4
+    usecase "Delete Requirement" as UC5
+    usecase "Add Comment" as UC6
+    usecase "Resolve Comment" as UC7
+    usecase "Create Hierarchical Requirement" as UC8
+    usecase "Mark as Implementable" as UC9
+    usecase "Mark as Testable" as UC10
+
+    usecase "Create Tag" as UC11
+    usecase "View Tags" as UC12
+    usecase "Update Tag" as UC13
+    usecase "Delete Tag" as UC14
+    usecase "Assign Tag to Requirement" as UC15
+
+    UC1 <.. UC8 : extends
+    UC1 <.. UC9 : extends
+    UC1 <.. UC10 : extends
+    UC3 <.. UC6 : extends
+    UC6 <.. UC7 : extends
+}
+
+engineer --> UC1
+engineer --> UC2
+engineer --> UC3
+engineer --> UC4
+engineer --> UC5
+
+engineer --> UC11
+engineer --> UC12
+engineer --> UC13
+engineer --> UC14
+engineer --> UC15
+
+note right of UC1
+    Requires Description
+    Validation enforced
+end note
+
+note right of UC8
+    Link to Parent via
+    ParentSoftwareRequirementId
+end note
+
+note bottom of UC11
+    Tag feature models defined
+    API not yet implemented
+end note
+
+@enduml

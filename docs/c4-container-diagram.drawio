@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram name="C4 Container" id="c4-container">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="SpecSync - Container Diagram" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="450" y="20" width="500" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- User Person -->
+        <mxCell id="user" value="Software Engineer&#xa;&#xa;Uses the web application&#xa;to manage requirements" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#08427B;strokeColor=#073763;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="80" y="300" width="80" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- System Boundary -->
+        <mxCell id="boundary" value="SpecSync System Boundary" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=5 5;fillColor=none;strokeColor=#666666;verticalAlign=top;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="250" y="100" width="900" height="600" as="geometry" />
+        </mxCell>
+
+        <!-- Angular SPA -->
+        <mxCell id="spa" value="Single Page Application&#xa;&#xa;Container: Angular 19&#xa;TypeScript&#xa;&#xa;Provides the user interface&#xa;for managing software&#xa;requirements" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3A7FC0;fontColor=#ffffff;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="300" y="200" width="200" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- API -->
+        <mxCell id="api" value="API Application&#xa;&#xa;Container: ASP.NET Core 8&#xa;C Sharp&#xa;&#xa;Provides REST API for&#xa;software requirements&#xa;management via JSON&#xa;over HTTP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3A7FC0;fontColor=#ffffff;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="200" width="200" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Database -->
+        <mxCell id="database" value="Database&#xa;&#xa;Container: Couchbase Lite&#xa;Embedded NoSQL&#xa;&#xa;Stores software requirements&#xa;comments and tags" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#438DD5;strokeColor=#3A7FC0;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="950" y="220" width="160" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Validation Library -->
+        <mxCell id="validation" value="Validation Library&#xa;&#xa;Container: .NET Library&#xa;FluentValidation&#xa;&#xa;Provides cross-cutting&#xa;request validation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D8FC0;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="450" y="480" width="180" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Models Library -->
+        <mxCell id="models" value="Models Library&#xa;&#xa;Container: .NET Library&#xa;&#xa;Domain models, DTOs,&#xa;Request and Response&#xa;classes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D8FC0;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="700" y="480" width="180" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="arrow1" value="Uses&#xa;HTTPS" style="endArrow=classic;html=1;strokeColor=#000000;fontColor=#000000;" edge="1" parent="1" source="user" target="spa">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="170" y="360" as="sourcePoint" />
+            <mxPoint x="290" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow2" value="Makes API calls&#xa;JSON over HTTP" style="endArrow=classic;html=1;strokeColor=#000000;fontColor=#000000;" edge="1" parent="1" source="spa" target="api">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="510" y="280" as="sourcePoint" />
+            <mxPoint x="590" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow3" value="Reads and writes&#xa;JSON documents" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#000000;fontColor=#000000;" edge="1" parent="1" source="api" target="database">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="810" y="290" as="sourcePoint" />
+            <mxPoint x="940" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow4" value="Uses" style="endArrow=classic;html=1;strokeColor=#000000;fontColor=#000000;dashed=1;" edge="1" parent="1" source="api" target="validation">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="650" y="390" as="sourcePoint" />
+            <mxPoint x="540" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow5" value="Uses" style="endArrow=classic;html=1;strokeColor=#000000;fontColor=#000000;dashed=1;" edge="1" parent="1" source="api" target="models">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="700" y="390" as="sourcePoint" />
+            <mxPoint x="790" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-title" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="520" width="100" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-container" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3A7FC0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="560" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-container-text" value="Container" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="560" width="100" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-lib" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D8FC0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="600" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-lib-text" value="Library" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="600" width="100" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-db" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#438DD5;strokeColor=#3A7FC0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="640" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-db-text" value="Database" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="640" width="100" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

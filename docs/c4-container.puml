@@ -1,0 +1,81 @@
+@startuml C4 Container Diagram
+
+title SpecSync System - C4 Container Diagram
+
+skinparam rectangle {
+    BackgroundColor<<person>> LightSkyBlue
+    BorderColor<<person>> DarkBlue
+    BackgroundColor<<container>> LightBlue
+    BorderColor<<container>> DarkBlue
+    BackgroundColor<<database>> LightGreen
+    BorderColor<<database>> DarkGreen
+    BackgroundColor<<library>> PaleGoldenRod
+    BorderColor<<library>> DarkGoldenRod
+}
+
+rectangle "Software Engineer" <<person>> as user
+
+package "SpecSync System Boundary" {
+
+    rectangle "Single Page Application" <<container>> as spa {
+    }
+    note right of spa
+        Container: Angular 19
+        Language: TypeScript
+
+        Provides the user interface
+        for managing software
+        requirements
+    end note
+
+    rectangle "API Application" <<container>> as api {
+    }
+    note bottom of api
+        Container: ASP.NET Core 8
+        Language: C#
+
+        Provides REST API for
+        software requirements
+        management via JSON
+        over HTTP
+    end note
+
+    rectangle "Validation Library" <<library>> as validation {
+    }
+    note left of validation
+        Container: .NET Library
+        FluentValidation
+
+        Provides cross-cutting
+        request validation
+    end note
+
+    rectangle "Models Library" <<library>> as models {
+    }
+    note right of models
+        Container: .NET Library
+
+        Domain models, DTOs,
+        Request and Response
+        classes
+    end note
+
+    database "Couchbase Lite Database" <<database>> as db {
+    }
+    note right of db
+        Container: Couchbase Lite
+        Embedded NoSQL
+
+        Stores software requirements
+        comments and tags as
+        JSON documents
+    end note
+}
+
+user --> spa : Uses\n(HTTPS)
+spa --> api : Makes API calls\n(JSON over HTTP)
+api --> db : Reads and writes\n(JSON documents)
+api ..> validation : uses
+api ..> models : uses
+
+@enduml

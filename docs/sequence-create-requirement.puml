@@ -1,0 +1,68 @@
+@startuml Create Software Requirement Sequence
+
+title Create Software Requirement - Sequence Diagram
+
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam maxmessagesize 200
+
+actor "Client" as client
+participant "Controller\nSoftwareRequirementsController" as controller
+participant "Mediator\nIMediator" as mediator
+participant "ValidationBehavior\nIPipelineBehavior" as validation
+participant "Validator\nCreateSoftwareRequirementRequestValidator" as validator
+participant "Handler\nCreateSoftwareRequirementHandler" as handler
+participant "Repository\nISoftwareRequirementsRepository" as repository
+database "Couchbase Lite\nDatabase" as db
+
+client -> controller : POST /api/softwarerequirements\n(CreateSoftwareRequirementRequest)
+activate controller
+
+controller -> mediator : Send(request)
+activate mediator
+
+mediator -> validation : Handle(request, next)
+activate validation
+
+validation -> validator : Validate(context)
+activate validator
+validator --> validation : ValidationResult
+deactivate validator
+
+alt Validation Failed
+    validation --> mediator : Response with Errors
+    mediator --> controller : Response with Errors
+    controller --> client : 200 OK\n(with errors in response)
+else Validation Passed
+    validation -> handler : next()
+    activate handler
+
+    handler -> handler : Create SoftwareRequirement\nfrom request
+
+    handler -> repository : Create(softwareRequirement)
+    activate repository
+
+    repository -> db : Save MutableDocument
+    activate db
+    db --> repository : Success
+    deactivate db
+
+    repository --> handler : void
+    deactivate repository
+
+    handler -> handler : ToDto()\nMap to DTO
+
+    handler --> validation : CreateSoftwareRequirementResponse
+    deactivate handler
+
+    validation --> mediator : Response
+    deactivate validation
+
+    mediator --> controller : Response
+    deactivate mediator
+
+    controller --> client : 200 OK\n(CreateSoftwareRequirementResponse)
+    deactivate controller
+end
+
+@enduml
