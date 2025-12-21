@@ -1,25 +1,21 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9170D4D9-DA96-451A-B452-18BCED54FFBA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Core", "src\Tseten.Core\Tseten.Core.csproj", "{9C3C97C9-0ED6-471C-87B1-D177150624B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Validation", "src\Tseten.Validation\Tseten.Validation.csproj", "{CB8750A1-085B-4DDE-B6E3-4C00A3962FB2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Infrastructure", "src\Tseten.Infrastructure\Tseten.Infrastructure.csproj", "{B1234567-1234-1234-1234-123456789ABC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Models", "src\Tseten.Models\Tseten.Models.csproj", "{9C3C97C9-0ED6-471C-87B1-D177150624B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.SoftwareRequirements.Api", "src\Tseten.SoftwareRequirements.Api\Tseten.SoftwareRequirements.Api.csproj", "{DEA82CDA-C6AD-490F-AF9B-CEC6F13A2C0A}"
-EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Tseten.App", "src\Tseten.App\Tseten.App.esproj", "{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Api", "src\Tseten.Api\Tseten.Api.csproj", "{DEA82CDA-C6AD-490F-AF9B-CEC6F13A2C0A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5AB2E750-8D8B-4D1C-801D-D2B9E502D9DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Core.Tests", "test\Tseten.Core.Tests\Tseten.Core.Tests.csproj", "{C1234567-1234-1234-1234-123456789ABC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Api.Tests", "test\Tseten.Api.Tests\Tseten.Api.Tests.csproj", "{A0BAF93B-2B84-48FE-AEE6-0312972C6172}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.Infrastructure.Tests", "test\Tseten.Infrastructure.Tests\Tseten.Infrastructure.Tests.csproj", "{D1234567-1234-1234-1234-123456789ABC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tseten.SoftwareRequirements.Api.Tests", "test\Tseten.SoftwareRequirements.Api.Tests\Tseten.SoftwareRequirements.Api.Tests.csproj", "{A0BAF93B-2B84-48FE-AEE6-0312972C6172}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Tseten.App", "src\Tseten.App\Tseten.App.esproj", "{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,48 +23,38 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CB8750A1-085B-4DDE-B6E3-4C00A3962FB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB8750A1-085B-4DDE-B6E3-4C00A3962FB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB8750A1-085B-4DDE-B6E3-4C00A3962FB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB8750A1-085B-4DDE-B6E3-4C00A3962FB2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9C3C97C9-0ED6-471C-87B1-D177150624B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9C3C97C9-0ED6-471C-87B1-D177150624B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C3C97C9-0ED6-471C-87B1-D177150624B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C3C97C9-0ED6-471C-87B1-D177150624B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1234567-1234-1234-1234-123456789ABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1234567-1234-1234-1234-123456789ABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1234567-1234-1234-1234-123456789ABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1234567-1234-1234-1234-123456789ABC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DEA82CDA-C6AD-490F-AF9B-CEC6F13A2C0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DEA82CDA-C6AD-490F-AF9B-CEC6F13A2C0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEA82CDA-C6AD-490F-AF9B-CEC6F13A2C0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEA82CDA-C6AD-490F-AF9B-CEC6F13A2C0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{C1234567-1234-1234-1234-123456789ABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1234567-1234-1234-1234-123456789ABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C1234567-1234-1234-1234-123456789ABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1234567-1234-1234-1234-123456789ABC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D1234567-1234-1234-1234-123456789ABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1234567-1234-1234-1234-123456789ABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1234567-1234-1234-1234-123456789ABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1234567-1234-1234-1234-123456789ABC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0BAF93B-2B84-48FE-AEE6-0312972C6172}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{CB8750A1-085B-4DDE-B6E3-4C00A3962FB2} = {9170D4D9-DA96-451A-B452-18BCED54FFBA}
 		{9C3C97C9-0ED6-471C-87B1-D177150624B8} = {9170D4D9-DA96-451A-B452-18BCED54FFBA}
-		{B1234567-1234-1234-1234-123456789ABC} = {9170D4D9-DA96-451A-B452-18BCED54FFBA}
 		{DEA82CDA-C6AD-490F-AF9B-CEC6F13A2C0A} = {9170D4D9-DA96-451A-B452-18BCED54FFBA}
-		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71} = {9170D4D9-DA96-451A-B452-18BCED54FFBA}
-		{C1234567-1234-1234-1234-123456789ABC} = {5AB2E750-8D8B-4D1C-801D-D2B9E502D9DC}
-		{D1234567-1234-1234-1234-123456789ABC} = {5AB2E750-8D8B-4D1C-801D-D2B9E502D9DC}
 		{A0BAF93B-2B84-48FE-AEE6-0312972C6172} = {5AB2E750-8D8B-4D1C-801D-D2B9E502D9DC}
+		{F8E9CA1A-C026-4D3C-B629-B55BB5E0DE71} = {9170D4D9-DA96-451A-B452-18BCED54FFBA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {67014C2B-921E-4E3B-AA5E-E819D0C32F7B}

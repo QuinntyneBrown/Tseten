@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div align="center">
   <img src="assets/logo.png" alt="Tseten Logo" width="200"/>
   <h1>Tseten</h1>
@@ -154,3 +155,6 @@ Detailed specifications and architecture diagrams are available in the [docs](do
 ## License
 
 [Add your license information here]
+=======
+# Tseten
+>>>>>>> d636d9762f3ac58f34fdeafeaeee50cfc437afb8

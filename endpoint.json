@@ -1,7 +1,7 @@
 {
   "microservices": [
     {
-      "name": "Tseten.SoftwareRequirements.Api",
+      "name": "Tseten.Api",
       "boundedContextName": "SoftwareRequirements",
       "kind": "Api",
       "productName": "Tseten"

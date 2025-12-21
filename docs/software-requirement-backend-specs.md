@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Software Requirement feature provides comprehensive CRUD (Create, Read, Update, Delete) operations for managing software requirements in the SpecSync application. It supports hierarchical requirements through parent-child relationships and includes a nested commenting system for collaboration.
+The Software Requirement feature provides comprehensive CRUD (Create, Read, Update, Delete) operations for managing software requirements in the Tseten application. It supports hierarchical requirements through parent-child relationships and includes a nested commenting system for collaboration.
 
 ## Architecture
 
@@ -20,7 +20,7 @@ The Software Requirement feature provides comprehensive CRUD (Create, Read, Upda
 ### SoftwareRequirement Entity
 
 ```csharp
-namespace SpecSync.Models.SoftwareRequirement;
+namespace Tseten.Models.SoftwareRequirement;
 
 public class SoftwareRequirement
 {
@@ -36,7 +36,7 @@ public class SoftwareRequirement
 ### Comment Entity (Nested Structure)
 
 ```csharp
-namespace SpecSync.Models.SoftwareRequirement;
+namespace Tseten.Models.SoftwareRequirement;
 
 public class Comment
 {

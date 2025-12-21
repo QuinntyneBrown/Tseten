@@ -2,7 +2,7 @@
 
 ## Overview
 
-The SpecSync.App is an Angular 19 frontend application that serves as the user interface for the SpecSync software requirements management system. Currently, the application is in a scaffold/placeholder state with minimal implementation.
+The Tseten.App is an Angular 19 frontend application that serves as the user interface for the Tseten software requirements management system. Currently, the application is in a scaffold/placeholder state with minimal implementation.
 
 **Implementation Status**: Framework setup complete. Components, services, and features NOT yet implemented.
 
@@ -21,7 +21,7 @@ The SpecSync.App is an Angular 19 frontend application that serves as the user i
 ## Project Structure
 
 ```
-src/SpecSync.App/
+src/Tseten.App/
     src/
         app/
             app.component.ts          # Root component
@@ -87,7 +87,7 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'SpecSync.App';
+  title = 'Tseten.App';
 }
 ```
 
@@ -97,7 +97,7 @@ export class AppComponent {
 |---------|-------|-------------|
 | eventCoalescing | true | Batches multiple events into single change detection |
 | selector | app-root | Root component selector |
-| title | SpecSync.App | Application title |
+| title | Tseten.App | Application title |
 
 ---
 

@@ -407,35 +407,35 @@ DELETE /api/tags/3fa85f64-5717-4562-b3fc-2c963f66afa6 HTTP/1.1
 
 | Component | File Path |
 |-----------|-----------|
-| Tag Entity | `src/SpecSync.Models/Tag/Tag.cs` |
-| TagDto | `src/SpecSync.Models/Tag/TagDto.cs` |
-| TagExtensions | `src/SpecSync.Models/Tag/TagExtensions.cs` |
-| CreateTagRequest | `src/SpecSync.Models/Tag/CreateTagRequest.cs` |
-| CreateTagResponse | `src/SpecSync.Models/Tag/CreateTagResponse.cs` |
-| CreateTagRequestValidator | `src/SpecSync.Models/Tag/CreateTagRequestValidator.cs` |
-| GetTagsRequest | `src/SpecSync.Models/Tag/GetTagsRequest.cs` |
-| GetTagsResponse | `src/SpecSync.Models/Tag/GetTagsResponse.cs` |
-| GetTagByIdRequest | `src/SpecSync.Models/Tag/GetTagByIdRequest.cs` |
-| GetTagByIdResponse | `src/SpecSync.Models/Tag/GetTagByIdResponse.cs` |
-| UpdateTagRequest | `src/SpecSync.Models/Tag/UpdateTagRequest.cs` |
-| UpdateTagResponse | `src/SpecSync.Models/Tag/UpdateTagResponse.cs` |
-| UpdateTagRequestValidator | `src/SpecSync.Models/Tag/UpdateTagRequestValidator.cs` |
-| DeleteTagRequest | `src/SpecSync.Models/Tag/DeleteTagRequest.cs` |
-| DeleteTagResponse | `src/SpecSync.Models/Tag/DeleteTagResponse.cs` |
-| DeleteTagRequestValidator | `src/SpecSync.Models/Tag/DeleteTagRequestValidator.cs` |
+| Tag Entity | `src/Tseten.Models/Tag/Tag.cs` |
+| TagDto | `src/Tseten.Models/Tag/TagDto.cs` |
+| TagExtensions | `src/Tseten.Models/Tag/TagExtensions.cs` |
+| CreateTagRequest | `src/Tseten.Models/Tag/CreateTagRequest.cs` |
+| CreateTagResponse | `src/Tseten.Models/Tag/CreateTagResponse.cs` |
+| CreateTagRequestValidator | `src/Tseten.Models/Tag/CreateTagRequestValidator.cs` |
+| GetTagsRequest | `src/Tseten.Models/Tag/GetTagsRequest.cs` |
+| GetTagsResponse | `src/Tseten.Models/Tag/GetTagsResponse.cs` |
+| GetTagByIdRequest | `src/Tseten.Models/Tag/GetTagByIdRequest.cs` |
+| GetTagByIdResponse | `src/Tseten.Models/Tag/GetTagByIdResponse.cs` |
+| UpdateTagRequest | `src/Tseten.Models/Tag/UpdateTagRequest.cs` |
+| UpdateTagResponse | `src/Tseten.Models/Tag/UpdateTagResponse.cs` |
+| UpdateTagRequestValidator | `src/Tseten.Models/Tag/UpdateTagRequestValidator.cs` |
+| DeleteTagRequest | `src/Tseten.Models/Tag/DeleteTagRequest.cs` |
+| DeleteTagResponse | `src/Tseten.Models/Tag/DeleteTagResponse.cs` |
+| DeleteTagRequestValidator | `src/Tseten.Models/Tag/DeleteTagRequestValidator.cs` |
 
 ### Required Components (Not Implemented)
 
 | Component | Suggested File Path |
 |-----------|---------------------|
-| TagsController | `src/SpecSync.SoftwareRequirements.Api/Controllers/TagsController.cs` |
-| ITagsRepository | `src/SpecSync.SoftwareRequirements.Api/ITagsRepository.cs` |
-| TagsRepository | `src/SpecSync.SoftwareRequirements.Api/TagsRepository.cs` |
-| CreateTagHandler | `src/SpecSync.SoftwareRequirements.Api/RequestHandlers/CreateTagHandler.cs` |
-| GetTagsHandler | `src/SpecSync.SoftwareRequirements.Api/RequestHandlers/GetTagsHandler.cs` |
-| GetTagByIdHandler | `src/SpecSync.SoftwareRequirements.Api/RequestHandlers/GetTagByIdHandler.cs` |
-| UpdateTagHandler | `src/SpecSync.SoftwareRequirements.Api/RequestHandlers/UpdateTagHandler.cs` |
-| DeleteTagHandler | `src/SpecSync.SoftwareRequirements.Api/RequestHandlers/DeleteTagHandler.cs` |
+| TagsController | `src/Tseten.Api/Controllers/TagsController.cs` |
+| ITagsRepository | `src/Tseten.Api/ITagsRepository.cs` |
+| TagsRepository | `src/Tseten.Api/TagsRepository.cs` |
+| CreateTagHandler | `src/Tseten.Api/RequestHandlers/CreateTagHandler.cs` |
+| GetTagsHandler | `src/Tseten.Api/RequestHandlers/GetTagsHandler.cs` |
+| GetTagByIdHandler | `src/Tseten.Api/RequestHandlers/GetTagByIdHandler.cs` |
+| UpdateTagHandler | `src/Tseten.Api/RequestHandlers/UpdateTagHandler.cs` |
+| DeleteTagHandler | `src/Tseten.Api/RequestHandlers/DeleteTagHandler.cs` |
 
 ---
 
