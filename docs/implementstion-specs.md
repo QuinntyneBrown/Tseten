@@ -41,6 +41,9 @@ The following architectural constraints are fundamental to the Tseten system and
 ### 2.1 Namespace Architecture
 **REQ-SYS-001**: The system SHALL use flattened namespaces throughout all projects.
 
+### 2.8 Frontend Theme and Colours
+**REQ-SYS-011**: The frontend SHALL use the default Angular Material colours and theme. No new colours are to be introduced.
+
 ### 2.2 Backend Project Structure
 **REQ-SYS-002**: The Backend SHALL consist of exactly three (3) projects:
 - Tseten.Core

@@ -14,8 +14,8 @@ public class PasswordHasher : IPasswordHasher
 
     public string HashPassword(string password, byte[] salt)
     {
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA1);
-        return Convert.ToBase64String(pbkdf2.GetBytes(HashSize));
+        var hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, HashAlgorithmName.SHA1, HashSize);
+        return Convert.ToBase64String(hash);
     }
 
     public byte[] GenerateSalt()
