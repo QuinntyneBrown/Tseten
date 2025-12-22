@@ -7,10 +7,30 @@ import { RouterOutlet, RouterLink } from '@angular/router';
 import { AuthService, NavigationService, User } from '../../@core';
 import { Observable } from 'rxjs';
 
+// Angular Material imports
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
+
 @Component({
   selector: 'app-workspace',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterLink,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatSidenavModule,
+    MatListModule,
+    MatDividerModule
+  ],
   templateUrl: './workspace.html',
   styleUrl: './workspace.scss'
 })

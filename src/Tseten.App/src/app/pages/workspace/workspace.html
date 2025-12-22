@@ -2,24 +2,43 @@
 <!-- Licensed under the MIT License. See License.txt in the project root for license information. -->
 
 <div class="workspace">
-  <nav class="workspace__nav">
-    <div class="workspace__nav-brand">
-      <h1 class="workspace__nav-title">Tseten</h1>
-    </div>
+  <mat-toolbar color="primary" class="workspace__toolbar">
+    <span class="workspace__title">Tseten</span>
 
-    <ul class="workspace__nav-menu">
-      <li class="workspace__nav-item">
-        <a routerLink="/workspace/requirements" class="workspace__nav-link">Requirements</a>
-      </li>
-    </ul>
+    <span class="workspace__spacer"></span>
 
-    <div class="workspace__nav-user">
-      @if (currentUser$ | async; as user) {
-        <span class="workspace__nav-username">{{ user.username }}</span>
-      }
-      <button class="workspace__nav-logout" (click)="logout()">Logout</button>
-    </div>
-  </nav>
+    <nav class="workspace__nav">
+      <a mat-button routerLink="/workspace/requirements">
+        <mat-icon>list_alt</mat-icon>
+        Requirements
+      </a>
+    </nav>
+
+    <span class="workspace__spacer"></span>
+
+    @if (currentUser$ | async; as user) {
+      <button mat-button [matMenuTriggerFor]="userMenu" class="workspace__user-btn">
+        <mat-icon>account_circle</mat-icon>
+        <span>{{ user.username }}</span>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item disabled>
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </button>
+        <button mat-menu-item disabled>
+          <mat-icon>settings</mat-icon>
+          <span>Settings</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    }
+  </mat-toolbar>
 
   <main class="workspace__main">
     <router-outlet></router-outlet>
