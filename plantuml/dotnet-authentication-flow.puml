@@ -1,0 +1,124 @@
+@startuml Tseten Authentication and Authorization
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten Authentication & Authorization Flow
+
+skinparam sequence {
+    ArrowColor #1976D2
+    ActorBorderColor #1565C0
+    LifeLineBorderColor #1565C0
+    ParticipantBorderColor #1976D2
+    ParticipantBackgroundColor #E3F2FD
+}
+
+actor "Client" as client
+participant "UserController" as controller
+participant "AuthenticateHandler" as handler
+participant "PasswordHasher" as hasher
+participant "TokenService" as tokenService
+participant "ITsetenContext" as context
+database "Users Collection" as db
+
+== Authentication Flow ==
+
+client -> controller : POST /api/users/authenticate\n(username, password)
+activate controller
+
+controller -> handler : Send(AuthenticateRequest)
+activate handler
+
+handler -> context : Query(u => u.Username == username)
+activate context
+
+context -> db : Find user document
+activate db
+db --> context : User document
+deactivate db
+deactivate context
+
+alt User not found
+    handler --> controller : Error: Invalid credentials
+    controller --> client : 401 Unauthorized
+else User found
+    handler -> hasher : VerifyPassword(password, hash, salt)
+    activate hasher
+    hasher --> handler : bool (verified)
+    deactivate hasher
+    
+    alt Password incorrect
+        handler --> controller : Error: Invalid credentials
+        controller --> client : 401 Unauthorized
+    else Password correct
+        handler -> tokenService : GenerateToken(user)
+        activate tokenService
+        
+        tokenService -> tokenService : Create JWT claims\n- UserId\n- Username\n- Roles\n- Expiration
+        
+        tokenService -> tokenService : Sign token with\nsecret key
+        
+        tokenService --> handler : JWT token string
+        deactivate tokenService
+        
+        handler --> controller : AuthenticateResponse\n(token, user info)
+        deactivate handler
+        
+        controller --> client : 200 OK\n(JWT token)
+        deactivate controller
+    end
+end
+
+== Authorization Flow ==
+
+client -> controller : GET /api/softwarerequirements\nAuthorization: Bearer <token>
+activate controller
+
+controller -> controller : Validate JWT token\n(middleware)
+
+alt Token invalid/expired
+    controller --> client : 401 Unauthorized
+else Token valid
+    controller -> controller : Extract claims\n(UserId, Roles)
+    
+    controller -> controller : Check role permissions\nfor endpoint
+    
+    alt Insufficient permissions
+        controller --> client : 403 Forbidden
+    else Has permission
+        controller -> handler : Process request
+        activate handler
+        handler --> controller : Response
+        deactivate handler
+        controller --> client : 200 OK (data)
+    end
+end
+deactivate controller
+
+note right of tokenService
+  **JWT Configuration**
+  - Secret key from appsettings
+  - Expiration: 24 hours default
+  - Claims: UserId, Username, Roles
+  - Algorithm: HS256
+  
+  **Swagger Integration**
+  Bearer token in header:
+  Authorization: Bearer <token>
+end note
+
+note left of hasher
+  **Password Security**
+  - Bcrypt/Argon2 hashing
+  - Unique salt per user
+  - Stored hash + salt
+  - Never store plain password
+  
+  **Registration**
+  1. Generate salt
+  2. Hash password with salt
+  3. Store hash + salt
+end note
+
+@enduml

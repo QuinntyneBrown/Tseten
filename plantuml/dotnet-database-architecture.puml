@@ -1,0 +1,101 @@
+@startuml Tseten Database Architecture
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten Dual Database Strategy - Data Storage Architecture
+scale 0.9
+
+skinparam database {
+    BackgroundColor #E8F5E9
+    BorderColor #2E7D32
+}
+
+skinparam component {
+    BackgroundColor #E3F2FD
+    BorderColor #1976D2
+}
+
+package "Tseten.Infrastructure" as infra {
+    component [TsetenContext] as couchContext
+    component [VectorDbContext] as vectorContext
+    component [EmbeddingService] as embeddingService
+}
+
+database "Couchbase Lite" as couchbase
+database "SQL Server" as sqlserver
+
+' Relationships
+couchContext --> couchbase : reads/writes documents
+vectorContext --> sqlserver : EF Core mapping
+embeddingService --> vectorContext : uses
+embeddingService --> sqlserver : query vectors
+
+note right of couchContext
+  **Couchbase Lite Context**
+  - Database : Database
+  - GetCollection<T>()
+  - SaveDocument<T>()
+  - GetDocument<T>(id)
+  - Query<T>(predicate)
+  - DeleteDocument(id)
+  
+  Implements ITsetenContext
+  Document-based operations
+end note
+
+note right of vectorContext
+  **EF Core DbContext**
+  - Embeddings : DbSet<Embedding>
+  - OnModelCreating()
+  - SaveChangesAsync()
+  
+  SQL Server vector storage
+  Entity Framework Core
+end note
+
+note right of embeddingService
+  **Vector Embedding Service**
+  - GenerateEmbedding(text)
+  - SearchBySimilarity(query, threshold)
+  - CosineSimilarity(v1, v2)
+  
+  384-dimensional vectors
+  Semantic search operations
+end note
+
+note right of couchbase
+  **Embedded NoSQL Database**
+  No separate server process needed.
+  Database files stored locally with app.
+  
+  **Collections:**
+  - software-requirements
+  - tags
+  - users
+  - profiles
+  
+  **Format:** JSON documents
+  Schema-less flexibility
+  Offline-first capable
+end note
+
+note right of sqlserver
+  **Vector Database**
+  Requires SQL Server or SQL Express.
+  
+  **Table: Embeddings**
+  - Id (int, PK, Identity)
+  - SoftwareRequirementId (string)
+  - Embedding (float[], 384 dims)
+  - LastUpdated (DateTime)
+  
+  Indexed for cosine similarity
+  
+  **Why Dual Database?**
+  1. Couchbase: Fast document retrieval
+  2. SQL Server: Optimized vector queries
+end note
+
+@enduml

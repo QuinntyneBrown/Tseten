@@ -1,0 +1,71 @@
+@startuml Tseten API Endpoints and Controllers
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten REST API - Endpoints and Controllers
+
+skinparam component {
+    BackgroundColor #E8F5E9
+    BorderColor #2E7D32
+}
+
+skinparam interface {
+    BackgroundColor #FFF3E0
+    BorderColor #E65100
+}
+
+package "API Controllers" {
+    
+    component [SoftwareRequirementsController] as srController
+    
+    component [TagsController] as tagController
+    
+    component [UserController] as userController
+}
+
+interface "IMediator" as mediator
+interface "ITsetenContext" as context
+interface "IEmbeddingService" as embedding
+interface "ITokenService" as tokenService
+interface "IPasswordHasher" as passwordHasher
+
+srController --> mediator : sends requests
+tagController --> mediator : sends requests
+userController --> mediator : sends requests
+
+mediator --> context : data access
+mediator --> embedding : vector operations
+mediator --> tokenService : JWT generation
+mediator --> passwordHasher : password hashing
+
+note right of srController
+  **Main Controller**
+  Handles all requirement
+  CRUD operations plus
+  semantic search and
+  embedding sync.
+  
+  Uses MediatR to dispatch
+  commands and queries.
+end note
+
+note bottom of userController
+  **Authentication**
+  JWT Bearer token based.
+  Password hashing with salt.
+  Role-based authorization.
+  
+  Swagger requires Bearer
+  token in Authorization header.
+end note
+
+note right of embedding
+  **Vector Search**
+  Converts text to 384-dim
+  embeddings. Cosine similarity
+  ranking. SQL Server storage.
+end note
+
+@enduml

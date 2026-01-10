@@ -1,0 +1,131 @@
+@startuml Tseten Deployment Architecture
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten - Deployment Architecture
+
+skinparam node {
+    BackgroundColor #E3F2FD
+    BorderColor #1976D2
+}
+
+skinparam component {
+    BackgroundColor #BBDEFB
+    BorderColor #1565C0
+}
+
+skinparam database {
+    BackgroundColor #C8E6C9
+    BorderColor #388E3C
+}
+
+actor "End User" as user
+
+node "Web Browser" {
+    component [Angular 19 SPA] as spa
+}
+
+node "Application Server" {
+    component [ASP.NET Core 8.0 API] as api
+    component [Tseten.Core] as core
+    component [Tseten.Infrastructure] as infra
+}
+
+node "Data Server" {
+    database "Couchbase Lite" as couchbase
+    database "SQL Server" as sqlserver
+}
+
+' User interactions
+user --> spa : HTTPS\nhttps://localhost:4200
+
+' API communication
+spa --> api : REST API\nJSON over HTTPS\nhttps://localhost:7157/api
+
+' Internal dependencies
+api --> core : uses
+api --> infra : uses
+infra --> core : uses
+
+' Data access
+infra --> couchbase : embedded access
+infra --> sqlserver : EF Core\nTCP/IP
+
+note right of spa
+  **Angular 19 SPA**
+  - TypeScript 5.6
+  - Angular Material UI
+  - Standalone components
+  - Served as static files
+  
+  **Build:** ng build --configuration production
+  **Output:** dist/ folder
+  
+  **Hosting Options:**
+  - Development: ng serve
+  - Production: nginx, IIS, Azure
+end note
+
+note bottom of api
+  **ASP.NET Core 8.0**
+  - .NET 8.0 Runtime
+  - Kestrel web server
+  - HTTPS (port 7157)
+  - HTTP (port 5000)
+  
+  **Deploy:** dotnet publish -c Release
+  
+  **Hosting Options:**
+  - Development: dotnet run
+  - Windows: IIS with ASP.NET Core Module
+  - Linux: Kestrel with reverse proxy
+  - Docker: Container deployment
+  - Azure: App Service, Container Apps
+end note
+
+note right of couchbase
+  **Embedded Database**
+  No separate server needed.
+  Database files: *.cblite2
+  
+  **Collections:**
+  - software-requirements
+  - tags
+  - users
+  - profiles
+  
+  **Backup:** Copy *.cblite2 directory
+end note
+
+note right of sqlserver
+  **Vector Database**
+  SQL Server or SQL Express
+  
+  **Database:** TsetenVectorDb
+  **Table:** Embeddings (384-dim vectors)
+  
+  **Connection String:**
+  Server=.\\SQLEXPRESS;
+  Database=TsetenVectorDb;
+  Trusted_Connection=true;
+  
+  **Alternatives:**
+  - Azure SQL Database
+  - PostgreSQL with pgvector
+end note
+
+note bottom of "Application Server"
+  **Development Setup Steps:**
+  1. Install .NET 8 SDK
+  2. Install Node.js 18+
+  3. Install SQL Server Express
+  4. Clone repository
+  5. Backend: dotnet restore, dotnet run
+  6. Frontend: npm install, ng serve
+  7. Run migrations for SQL Server
+  8. Seed database with sample data
+end note
+
+@enduml

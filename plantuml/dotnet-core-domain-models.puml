@@ -1,0 +1,185 @@
+@startuml Tseten Core Domain Models
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam classAttributeIconSize 0
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten Core - Domain Models and Aggregates
+scale 0.55
+
+skinparam class {
+    BackgroundColor #E1F5FE
+    BorderColor #01579B
+    ArrowColor #01579B
+}
+
+package "SoftwareRequirement Aggregate" <<Rectangle>> {
+    class SoftwareRequirement {
+        +SoftwareRequirementId : string
+        +ParentSoftwareRequirementId : string
+        +Description : string
+        +CanImplement : bool
+        +CanTest : bool
+        +Comments : List<Comment>
+        +AcceptanceCriteria : List<AcceptanceCriteria>
+        __
+        Represents a software requirement
+        with BDD-style acceptance criteria
+    }
+    
+    class Comment {
+        +CommentId : Guid
+        +ParentCommentId : Guid?
+        +Body : string
+        +Author : string
+        +Resolved : bool
+        +ParentComment : Comment?
+        +Comments : List<Comment>
+        __
+        Nested hierarchical comments
+        on requirements
+    }
+    
+    class AcceptanceCriteria {
+        +AcceptanceCriteriaId : Guid
+        +Given : string
+        +When : string
+        +Then : string
+        +Priority : AcceptanceCriteriaPriority
+        +Status : AcceptanceCriteriaStatus
+        __
+        BDD Given-When-Then format
+    }
+    
+    enum AcceptanceCriteriaPriority {
+        Low
+        Medium
+        High
+        Critical
+    }
+    
+    enum AcceptanceCriteriaStatus {
+        NotStarted
+        InProgress
+        Completed
+        Blocked
+    }
+    
+    class SoftwareRequirementEmbedding {
+        +Id : int
+        +SoftwareRequirementId : string
+        +Embedding : float[]
+        +LastUpdated : DateTime
+        __
+        384-dimensional vector
+        for semantic search
+    }
+}
+
+package "Tag Aggregate" <<Rectangle>> {
+    class Tag {
+        +TagId : Guid
+        +Name : string
+        +Description : string
+        __
+        Categorization tags
+        for requirements
+    }
+}
+
+package "User Aggregate" <<Rectangle>> {
+    class User {
+        +UserId : Guid
+        +Username : string
+        +PasswordHash : string
+        +Salt : string
+        +Email : string
+        +Roles : List<Role>
+        +Profile : Profile
+        __
+        User authentication
+        and authorization
+    }
+    
+    class Role {
+        +RoleId : Guid
+        +Name : string
+        +Privileges : List<Privilege>
+        __
+        Role-based access control
+    }
+    
+    enum Privilege {
+        ViewRequirements
+        CreateRequirements
+        UpdateRequirements
+        DeleteRequirements
+        ManageUsers
+        ManageTags
+        ExportData
+    }
+}
+
+package "Profile Aggregate" <<Rectangle>> {
+    class Profile {
+        +ProfileId : Guid
+        +UserId : Guid
+        +FirstName : string
+        +LastName : string
+        +Bio : string
+        +AvatarUrl : string
+        __
+        User profile information
+    }
+}
+
+package "InvitationToken Aggregate" <<Rectangle>> {
+    class InvitationToken {
+        +InvitationTokenId : Guid
+        +Token : string
+        +Email : string
+        +CreatedDate : DateTime
+        +ExpirationDate : DateTime
+        +Used : bool
+        __
+        User invitation tokens
+    }
+}
+
+' Relationships
+SoftwareRequirement "1" *-- "0..*" Comment : contains
+SoftwareRequirement "1" *-- "0..*" AcceptanceCriteria : has
+AcceptanceCriteria --> AcceptanceCriteriaPriority
+AcceptanceCriteria --> AcceptanceCriteriaStatus
+Comment "0..1" o-- "0..*" Comment : nested in
+SoftwareRequirement "1" -- "0..1" SoftwareRequirement : parent-child
+SoftwareRequirement "1" -- "1" SoftwareRequirementEmbedding : has vector
+
+User "1" *-- "0..*" Role : has
+Role "1" *-- "0..*" Privilege : has
+User "1" -- "0..1" Profile : has
+
+note right of SoftwareRequirement
+  **Root Aggregate**
+  Hierarchical structure with
+  parent-child relationships.
+  Supports nested comments.
+  BDD acceptance criteria.
+end note
+
+note bottom of SoftwareRequirementEmbedding
+  **Vector Embeddings**
+  Stored in SQL Server
+  for semantic search.
+  384-dimensional vectors.
+end note
+
+note right of User
+  **Identity Aggregate**
+  JWT token-based auth.
+  Role-based permissions.
+  Password hashing with salt.
+end note
+
+@enduml

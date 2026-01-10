@@ -1,0 +1,95 @@
+@startuml Tseten Angular Component and Routing
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten Angular - Component Hierarchy and Routing
+scale 0.8
+
+skinparam component {
+    BackgroundColor #FCE4EC
+    BorderColor #C2185B
+}
+
+skinparam package {
+    BackgroundColor #F3E5F5
+    BorderColor #8E24AA
+}
+
+package "Application Root" {
+    component [AppComponent] as appRoot
+}
+
+package "Routing Configuration" {
+    component [Routes Definition] as routes
+}
+
+package "Public Pages (Unauthenticated)" {
+    component [LoginPage] as login
+}
+
+package "Protected Pages (Authenticated)" {
+    component [WorkspacePage] as workspace
+    
+    component [RequirementsListPage] as reqList
+}
+
+package "Reusable Components (Future)" {
+    component [RequirementDetailComponent] as reqDetail
+    
+    component [AcceptanceCriteriaComponent] as acComponent
+    
+    component [CommentThreadComponent] as commentThread
+}
+
+' Routing flow
+appRoot --> routes : uses
+routes --> login : default route
+routes --> workspace : protected
+routes --> reqList : protected
+
+' Component hierarchy
+workspace ..> reqDetail : may contain
+reqList ..> reqDetail : navigates to
+reqDetail ..> acComponent : contains
+reqDetail ..> commentThread : contains
+
+note right of login
+  **Unauthenticated Route**
+  Accessible without token.
+  Redirects to /workspace
+  on successful login.
+end note
+
+note bottom of workspace
+  **Protected Routes**
+  AuthGuard checks JWT token.
+  Redirects to /login if not
+  authenticated.
+  
+  Token stored in localStorage.
+end note
+
+note left of reqList
+  **Data Fetching**
+  Component uses HttpClient
+  directly (no separate service
+  layer currently).
+  
+  API call in ngOnInit():
+  GET /api/softwarerequirements
+  
+  Future: Extract to service.
+end note
+
+note bottom of routes
+  **Standalone Architecture**
+  No NgModules. Each component
+  declares its own dependencies.
+  
+  Routes use function-based
+  configuration: provideRouter()
+end note
+
+@enduml
