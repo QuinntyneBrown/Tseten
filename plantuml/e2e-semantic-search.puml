@@ -1,0 +1,187 @@
+@startuml Tseten End-to-End Semantic Search
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten - End-to-End: Semantic Search Workflow
+
+skinparam sequence {
+    ArrowColor #6A1B9A
+    ActorBorderColor #4A148C
+    LifeLineBorderColor #4A148C
+    ParticipantBorderColor #6A1B9A
+    ParticipantBackgroundColor #F3E5F5
+}
+
+actor "User" as user
+box "Angular Frontend" #E8F5E9
+    participant "SearchComponent" as ui
+    participant "HttpClient" as http
+end box
+box "ASP.NET Backend" #E3F2FD
+    participant "SoftwareRequirementsController" as controller
+    participant "SearchSoftwareRequirementsHandler" as handler
+    participant "EmbeddingService" as embeddingService
+end box
+box "Data Stores" #FFF3E0
+    participant "VectorDbContext\n(EF Core)" as vectorDb
+    database "SQL Server\n(Embeddings)" as sqlServer
+    participant "TsetenContext" as couchContext
+    database "Couchbase Lite" as couchbase
+end box
+
+== User Performs Semantic Search ==
+
+user -> ui : Enter search query:\n"user authentication and security"
+activate ui
+
+user -> ui : Click "Search"
+
+ui -> ui : Build request:\nquery, pageNumber=1,\npageSize=10,\nsimilarityThreshold=0.7
+
+ui -> http : GET /api/softwarerequirements/search\n?query=...&pageNumber=1&pageSize=10
+activate http
+
+http -> controller : HTTP GET with query params
+activate controller
+
+controller -> controller : Authenticate & authorize
+
+controller -> handler : Send(SearchSoftwareRequirementsRequest)
+activate handler
+
+handler -> embeddingService : GenerateEmbedding(query)
+activate embeddingService
+
+embeddingService -> embeddingService : Tokenize query text
+
+embeddingService -> embeddingService : Generate 384-dimensional\nvector embedding
+
+embeddingService --> handler : float[] queryVector
+deactivate embeddingService
+
+handler -> vectorDb : SearchBySimilarity(\nqueryVector,\nthreshold,\npageNumber,\npageSize)
+activate vectorDb
+
+vectorDb -> vectorDb : Calculate cosine similarity:\nfor each embedding in DB
+
+note right of vectorDb
+**Cosine Similarity Formula**
+similarity = (A · B) / (||A|| * ||B||)
+
+Where:
+- A = query vector
+- B = stored embedding vector
+- · = dot product
+- ||x|| = vector magnitude
+
+Range: -1 to 1
+(1 = identical, 0 = orthogonal)
+end note
+
+vectorDb -> sqlServer : Query:\nSELECT Id, SoftwareRequirementId,\nEmbedding, Similarity\nWHERE Similarity > threshold\nORDER BY Similarity DESC\nPaginated
+activate sqlServer
+
+sqlServer -> sqlServer : Vector similarity computation\n(optimized with indexing)
+
+sqlServer --> vectorDb : List of (Id, SoftwareRequirementId,\nSimilarity score)
+deactivate sqlServer
+
+vectorDb --> handler : SearchResultDto[]\n(with scores)
+deactivate vectorDb
+
+loop For each result
+
+    handler -> couchContext : GetDocument<SoftwareRequirement>\n(softwareRequirementId)
+    activate couchContext
+    
+    couchContext -> couchbase : Retrieve document by ID
+    activate couchbase
+    
+    couchbase --> couchContext : JSON document
+    deactivate couchbase
+    
+    couchContext -> couchContext : Deserialize to\nSoftwareRequirement
+    
+    couchContext --> handler : SoftwareRequirement object
+    deactivate couchContext
+    
+    handler -> handler : Enrich result with:\n- Full description\n- Acceptance criteria\n- Can implement/test flags\n- Similarity score
+
+end
+
+handler -> handler : Build SearchSoftwareRequirementsResponse:\n- Results array\n- TotalCount\n- PageNumber, PageSize
+
+handler --> controller : Response with\npaginated results
+deactivate handler
+
+controller --> http : 200 OK\n(SearchSoftwareRequirementsResponse)
+deactivate controller
+
+http --> ui : Observable<Response>
+deactivate http
+
+ui -> ui : response.subscribe()
+
+ui -> ui : Display results:\n- Requirement cards\n- Similarity scores\n- Highlighted matches\n- Pagination controls
+
+ui --> user : Show search results\nordered by relevance
+deactivate ui
+
+== User Navigates Through Pages ==
+
+user -> ui : Click "Next Page"
+activate ui
+
+ui -> ui : Increment pageNumber
+
+ui -> http : GET /api/softwarerequirements/search\n?query=...&pageNumber=2&pageSize=10
+activate http
+
+note over http, handler
+Same flow as above,
+but with pageNumber=2
+
+Returns next page of results
+based on similarity ranking
+end note
+
+http --> ui : Page 2 results
+deactivate http
+
+ui --> user : Display page 2
+deactivate ui
+
+note bottom of sqlServer
+**Embedding Sync**
+Embeddings are populated via:
+POST /api/softwarerequirements/embeddings/import
+
+This should be called:
+- After creating requirements
+- After updating requirements
+- Periodically for sync
+
+Generates embeddings from:
+- Description text
+- Acceptance criteria text
+end note
+
+note right of ui
+**Search Features**
+- Semantic (meaning-based) search
+- Not keyword matching
+- Finds similar concepts
+- Pagination support
+- Configurable threshold
+- Filter by implementable/testable
+
+Example:
+Query: "login security"
+Matches: "user authentication",
+"credential validation", 
+"access control"
+end note
+
+@enduml

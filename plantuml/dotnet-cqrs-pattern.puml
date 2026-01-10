@@ -1,0 +1,220 @@
+@startuml Tseten CQRS Request-Response Flow
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten CQRS Pattern - Request/Response Flow with MediatR
+
+skinparam class {
+    BackgroundColor #FFF9C4
+    BorderColor #F57F17
+}
+
+skinparam interface {
+    BackgroundColor #E1BEE7
+    BorderColor #6A1B9A
+}
+
+package "MediatR Framework" {
+    interface "IRequest<TResponse>" as IRequest
+    interface "IRequestHandler<TRequest, TResponse>" as IHandler
+    interface "IPipelineBehavior<TRequest, TResponse>" as IPipeline
+    interface IMediator
+}
+
+package "SoftwareRequirement - Commands" <<Rectangle>> {
+    class CreateSoftwareRequirementRequest {
+        +SoftwareRequirementId : string
+        +ParentSoftwareRequirementId : string
+        +Description : string
+        +CanImplement : bool
+        +CanTest : bool
+        +Comments : List<Comment>
+        +AcceptanceCriteria : List<AcceptanceCriteria>
+    }
+    
+    class CreateSoftwareRequirementResponse {
+        +SoftwareRequirement : SoftwareRequirementDto
+        +Errors : List<string>
+    }
+    
+    class UpdateSoftwareRequirementRequest {
+        +SoftwareRequirementId : string
+        +Description : string
+        +CanImplement : bool
+        +CanTest : bool
+        +Comments : List<Comment>
+        +AcceptanceCriteria : List<AcceptanceCriteria>
+    }
+    
+    class UpdateSoftwareRequirementResponse {
+        +SoftwareRequirement : SoftwareRequirementDto
+        +Errors : List<string>
+    }
+    
+    class DeleteSoftwareRequirementRequest {
+        +SoftwareRequirementId : string
+    }
+    
+    class DeleteSoftwareRequirementResponse {
+        +Errors : List<string>
+    }
+}
+
+package "SoftwareRequirement - Queries" <<Rectangle>> {
+    class GetSoftwareRequirementsRequest {
+    }
+    
+    class GetSoftwareRequirementsResponse {
+        +SoftwareRequirements : List<SoftwareRequirementDto>
+        +Errors : List<string>
+    }
+    
+    class GetSoftwareRequirementByIdRequest {
+        +SoftwareRequirementId : string
+    }
+    
+    class GetSoftwareRequirementByIdResponse {
+        +SoftwareRequirement : SoftwareRequirementDto
+        +Errors : List<string>
+    }
+    
+    class SearchSoftwareRequirementsRequest {
+        +Query : string
+        +PageNumber : int
+        +PageSize : int
+        +SimilarityThreshold : float
+        +OnlyImplementable : bool?
+        +OnlyTestable : bool?
+    }
+    
+    class SearchSoftwareRequirementsResponse {
+        +Results : List<SearchResultDto>
+        +TotalCount : int
+        +PageNumber : int
+        +PageSize : int
+        +Errors : List<string>
+    }
+}
+
+package "Request Handlers (API Layer)" <<Rectangle>> {
+    class CreateSoftwareRequirementHandler {
+        -_context : ITsetenContext
+        +Handle(request, ct) : Task<Response>
+    }
+    
+    class UpdateSoftwareRequirementHandler {
+        -_context : ITsetenContext
+        +Handle(request, ct) : Task<Response>
+    }
+    
+    class DeleteSoftwareRequirementHandler {
+        -_context : ITsetenContext
+        +Handle(request, ct) : Task<Response>
+    }
+    
+    class GetSoftwareRequirementsHandler {
+        -_context : ITsetenContext
+        +Handle(request, ct) : Task<Response>
+    }
+    
+    class GetSoftwareRequirementByIdHandler {
+        -_context : ITsetenContext
+        +Handle(request, ct) : Task<Response>
+    }
+    
+    class SearchSoftwareRequirementsHandler {
+        -_context : ITsetenContext
+        -_embeddingService : IEmbeddingService
+        +Handle(request, ct) : Task<Response>
+    }
+}
+
+package "Validation Pipeline" <<Rectangle>> {
+    class ValidationBehavior<TRequest,TResponse> {
+        -_validators : IEnumerable<IValidator>
+        +Handle(request, next, ct) : Task<Response>
+    }
+    
+    class CreateSoftwareRequirementRequestValidator {
+        +Validate(request) : ValidationResult
+    }
+    
+    class UpdateSoftwareRequirementRequestValidator {
+        +Validate(request) : ValidationResult
+    }
+}
+
+package "Common" {
+    abstract class ResponseBase {
+        +Errors : List<string>
+        +ResponseBase()
+    }
+}
+
+' Implement MediatR interfaces
+CreateSoftwareRequirementRequest ..|> IRequest
+UpdateSoftwareRequirementRequest ..|> IRequest
+DeleteSoftwareRequirementRequest ..|> IRequest
+GetSoftwareRequirementsRequest ..|> IRequest
+GetSoftwareRequirementByIdRequest ..|> IRequest
+SearchSoftwareRequirementsRequest ..|> IRequest
+
+CreateSoftwareRequirementHandler ..|> IHandler
+UpdateSoftwareRequirementHandler ..|> IHandler
+DeleteSoftwareRequirementHandler ..|> IHandler
+GetSoftwareRequirementsHandler ..|> IHandler
+GetSoftwareRequirementByIdHandler ..|> IHandler
+SearchSoftwareRequirementsHandler ..|> IHandler
+
+ValidationBehavior ..|> IPipeline
+
+' Handler processes requests
+CreateSoftwareRequirementHandler ..> CreateSoftwareRequirementRequest : handles
+CreateSoftwareRequirementHandler ..> CreateSoftwareRequirementResponse : returns
+
+UpdateSoftwareRequirementHandler ..> UpdateSoftwareRequirementRequest : handles
+UpdateSoftwareRequirementHandler ..> UpdateSoftwareRequirementResponse : returns
+
+DeleteSoftwareRequirementHandler ..> DeleteSoftwareRequirementRequest : handles
+DeleteSoftwareRequirementHandler ..> DeleteSoftwareRequirementResponse : returns
+
+GetSoftwareRequirementsHandler ..> GetSoftwareRequirementsRequest : handles
+GetSoftwareRequirementsHandler ..> GetSoftwareRequirementsResponse : returns
+
+GetSoftwareRequirementByIdHandler ..> GetSoftwareRequirementByIdRequest : handles
+GetSoftwareRequirementByIdHandler ..> GetSoftwareRequirementByIdResponse : returns
+
+SearchSoftwareRequirementsHandler ..> SearchSoftwareRequirementsRequest : handles
+SearchSoftwareRequirementsHandler ..> SearchSoftwareRequirementsResponse : returns
+
+' Validation
+ValidationBehavior ..> CreateSoftwareRequirementRequestValidator : uses
+ValidationBehavior ..> UpdateSoftwareRequirementRequestValidator : uses
+
+' Response inheritance
+CreateSoftwareRequirementResponse --|> ResponseBase
+UpdateSoftwareRequirementResponse --|> ResponseBase
+DeleteSoftwareRequirementResponse --|> ResponseBase
+GetSoftwareRequirementsResponse --|> ResponseBase
+GetSoftwareRequirementByIdResponse --|> ResponseBase
+SearchSoftwareRequirementsResponse --|> ResponseBase
+
+note right of IMediator
+  **MediatR Pattern**
+  Mediator dispatches requests
+  to appropriate handlers via
+  pipeline behaviors including
+  validation.
+end note
+
+note bottom of ValidationBehavior
+  **Pipeline Behavior**
+  Validates request before
+  passing to handler.
+  Uses FluentValidation.
+  Returns errors in response.
+end note
+
+@enduml

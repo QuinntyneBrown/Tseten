@@ -1,0 +1,183 @@
+@startuml Tseten End-to-End Create Requirement
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten - End-to-End: Create Software Requirement Workflow
+
+skinparam sequence {
+    ArrowColor #1976D2
+    ActorBorderColor #1565C0
+    LifeLineBorderColor #1565C0
+    ParticipantBorderColor #1976D2
+    ParticipantBackgroundColor #E3F2FD
+}
+
+actor "User" as user
+box "Angular Frontend" #E8F5E9
+    participant "RequirementsListPage" as ui
+    participant "JwtInterceptor" as jwtInt
+    participant "HttpClient" as http
+end box
+box "ASP.NET Backend" #E3F2FD
+    participant "SoftwareRequirementsController" as controller
+    participant "MediatR" as mediator
+    participant "ValidationBehavior" as validation
+    participant "CreateSoftwareRequirementHandler" as handler
+end box
+box "Data Layer" #FFF3E0
+    participant "TsetenContext" as context
+    database "Couchbase Lite" as couchbase
+end box
+
+== User Creates New Requirement ==
+
+user -> ui : Click "Create New\nRequirement"
+activate ui
+
+ui -> ui : Display create form
+
+user -> ui : Enter:\n- Description\n- Parent ID (optional)\n- CanImplement\n- CanTest\n- Acceptance Criteria
+
+user -> ui : Click "Submit"
+
+ui -> ui : Build request object:\nCreateSoftwareRequirementRequest
+
+ui -> http : POST /api/softwarerequirements\nBody: request JSON
+activate http
+
+http -> jwtInt : Intercept request
+activate jwtInt
+
+jwtInt -> jwtInt : Retrieve token from\nlocalStorage
+
+jwtInt -> jwtInt : Add header:\nAuthorization: Bearer <token>
+
+jwtInt -> controller : Forward HTTP POST\nwith token
+activate controller
+deactivate jwtInt
+
+controller -> controller : Authenticate:\nValidate JWT token
+
+controller -> controller : Extract user claims\n(UserId, Roles)
+
+controller -> controller : Authorize:\nCheck permissions
+
+controller -> mediator : Send(CreateSoftwareRequirementRequest)
+activate mediator
+
+mediator -> validation : Pipeline behavior\nHandle(request, next)
+activate validation
+
+validation -> validation : Run FluentValidation:\nCreateSoftwareRequirementRequestValidator
+
+validation -> validation : Check:\n- Description required\n- Description length\n- Valid parent ID format\n- Acceptance criteria format
+
+alt Validation Fails
+    validation --> mediator : Response with Errors
+    mediator --> controller : Response with Errors
+    controller --> http : 200 OK (with errors)
+    http --> ui : Error response
+    ui -> ui : Display validation errors
+    ui --> user : Show error messages
+else Validation Passes
+    validation -> handler : next() → Call handler
+    activate handler
+    
+    handler -> handler : Generate new\nSoftwareRequirementId\n(if not provided)
+    
+    handler -> handler : Create SoftwareRequirement\nentity from request
+    
+    handler -> handler : Set metadata:\n- Created date\n- Modified date
+    
+    handler -> context : SaveDocument(softwareRequirement)
+    activate context
+    
+    context -> context : Serialize to JSON
+    
+    context -> couchbase : Create MutableDocument\nSave to collection
+    activate couchbase
+    
+    couchbase -> couchbase : Persist JSON document\nwith ID as key
+    
+    couchbase --> context : Success
+    deactivate couchbase
+    
+    context --> handler : void
+    deactivate context
+    
+    handler -> handler : Map to DTO:\nSoftwareRequirementDto
+    
+    handler --> validation : CreateSoftwareRequirementResponse\n(with DTO)
+    deactivate handler
+    
+    validation --> mediator : Response
+    deactivate validation
+    
+    mediator --> controller : Response
+    deactivate mediator
+    
+    controller --> http : 200 OK\n(CreateSoftwareRequirementResponse)
+    deactivate controller
+    
+    http --> ui : Success response
+    deactivate http
+    
+    ui -> ui : response.subscribe()
+    
+    ui -> ui : Add new requirement\nto local array
+    
+    ui -> ui : Close create form
+    
+    ui -> ui : Show success message
+    
+    ui --> user : Display updated\nrequirements list\nwith new item
+    deactivate ui
+end
+
+note right of validation
+  **Validation Rules**
+  - Description: Required, 10-5000 chars
+  - SoftwareRequirementId: Optional,
+    generated if not provided
+  - Parent ID: Must be valid format
+  - Acceptance Criteria:
+    * Given, When, Then required
+    * Valid priority enum
+    * Valid status enum
+end note
+
+note left of handler
+  **Document Structure**
+  {
+    "softwareRequirementId": "REQ-001",
+    "parentSoftwareRequirementId": null,
+    "description": "User can login...",
+    "canImplement": true,
+    "canTest": true,
+    "comments": [],
+    "acceptanceCriteria": [
+      {
+        "given": "user on login page",
+        "when": "enters valid credentials",
+        "then": "user is authenticated",
+        "priority": "High",
+        "status": "NotStarted"
+      }
+    ]
+  }
+end note
+
+note bottom of couchbase
+  **Next Steps**
+  After creating requirement,
+  user should call:
+  POST /api/softwarerequirements/embeddings/import
+  
+  This syncs the new requirement
+  to SQL Server vector database
+  for semantic search capability.
+end note
+
+@enduml

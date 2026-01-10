@@ -1,0 +1,168 @@
+@startuml Tseten API Endpoints and Controllers
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten REST API - Endpoints and Controllers
+
+skinparam component {
+    BackgroundColor #E8F5E9
+    BorderColor #2E7D32
+}
+
+skinparam interface {
+    BackgroundColor #FFF3E0
+    BorderColor #E65100
+}
+
+package "API Controllers" {
+    
+    component "SoftwareRequirementsController" as srController {
+        **Base Route:** /api/softwarerequirements
+        ====
+        **POST /** - Create
+        Creates new software requirement
+        Body: CreateSoftwareRequirementRequest
+        Returns: CreateSoftwareRequirementResponse
+        ----
+        **PUT /** - Update
+        Updates existing requirement
+        Body: UpdateSoftwareRequirementRequest
+        Returns: UpdateSoftwareRequirementResponse
+        ----
+        **DELETE /{id}** - Delete
+        Deletes requirement by ID
+        Route: softwareRequirementId
+        Returns: DeleteSoftwareRequirementResponse
+        ----
+        **GET /** - Get All
+        Lists all requirements
+        Returns: GetSoftwareRequirementsResponse
+        ----
+        **GET /{id}** - Get By ID
+        Gets single requirement
+        Route: softwareRequirementId
+        Returns: GetSoftwareRequirementByIdResponse
+        ----
+        **GET /search** - Semantic Search
+        Vector similarity search
+        Query: query, pageNumber, pageSize
+        Query: similarityThreshold, filters
+        Returns: SearchSoftwareRequirementsResponse
+        ----
+        **POST /embeddings/import** - Import
+        Syncs requirements to vector DB
+        Returns: ImportEmbeddingsResponse
+    }
+    
+    component "TagsController" as tagController {
+        **Base Route:** /api/tags
+        ====
+        **POST /** - Create Tag
+        Creates new tag
+        Body: CreateTagRequest
+        Returns: CreateTagResponse
+        ----
+        **PUT /** - Update Tag
+        Updates existing tag
+        Body: UpdateTagRequest
+        Returns: UpdateTagResponse
+        ----
+        **DELETE /{id}** - Delete Tag
+        Deletes tag by ID
+        Route: tagId
+        Returns: DeleteTagResponse
+        ----
+        **GET /** - Get All Tags
+        Lists all tags
+        Returns: GetTagsResponse
+        ----
+        **GET /{id}** - Get Tag By ID
+        Gets single tag
+        Route: tagId
+        Returns: GetTagByIdResponse
+    }
+    
+    component "UserController" as userController {
+        **Base Route:** /api/users
+        ====
+        **POST /authenticate** - Login
+        Authenticates user credentials
+        Body: AuthenticateRequest
+        Returns: AuthenticateResponse (JWT token)
+        ----
+        **POST /** - Create User
+        Registers new user
+        Body: CreateUserRequest
+        Returns: CreateUserResponse
+        ----
+        **POST /change-password** - Change Password
+        Updates user password
+        Body: ChangePasswordRequest
+        Returns: ChangePasswordResponse
+        ----
+        **GET /** - Get All Users
+        Lists all users (admin only)
+        Returns: GetUsersResponse
+        ----
+        **GET /{id}** - Get User By ID
+        Gets single user
+        Route: userId
+        Returns: GetUserByIdResponse
+        ----
+        **GET /current** - Get Current User
+        Gets authenticated user info
+        Returns: GetCurrentUserResponse
+        ----
+        **GET /exists** - User Exists
+        Checks if username exists
+        Query: username
+        Returns: UserExistsResponse
+    }
+}
+
+interface "IMediator" as mediator
+interface "ITsetenContext" as context
+interface "IEmbeddingService" as embedding
+interface "ITokenService" as tokenService
+interface "IPasswordHasher" as passwordHasher
+
+srController --> mediator : sends requests
+tagController --> mediator : sends requests
+userController --> mediator : sends requests
+
+mediator --> context : data access
+mediator --> embedding : vector operations
+mediator --> tokenService : JWT generation
+mediator --> passwordHasher : password hashing
+
+note right of srController
+  **Main Controller**
+  Handles all requirement
+  CRUD operations plus
+  semantic search and
+  embedding sync.
+  
+  Uses MediatR to dispatch
+  commands and queries.
+end note
+
+note bottom of userController
+  **Authentication**
+  JWT Bearer token based.
+  Password hashing with salt.
+  Role-based authorization.
+  
+  Swagger requires Bearer
+  token in Authorization header.
+end note
+
+note right of embedding
+  **Vector Search**
+  Converts text to 384-dim
+  embeddings. Cosine similarity
+  ranking. SQL Server storage.
+end note
+
+@enduml

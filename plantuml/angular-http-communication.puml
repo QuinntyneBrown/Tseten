@@ -1,0 +1,191 @@
+@startuml Tseten Angular HTTP Communication
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten Angular - HTTP Communication and Data Flow
+
+skinparam sequence {
+    ArrowColor #1976D2
+    ActorBorderColor #1565C0
+    LifeLineBorderColor #1565C0
+    ParticipantBorderColor #1976D2
+    ParticipantBackgroundColor #E3F2FD
+}
+
+actor "User" as user
+participant "RequirementsListPage" as component
+participant "HttpClient" as http
+participant "JwtInterceptor" as jwtInt
+participant "HeadersInterceptor" as headerInt
+participant "Backend API\n(ASP.NET Core)" as api
+database "Couchbase Lite" as db
+
+== Load Requirements ==
+
+user -> component : Navigate to\n/requirements
+activate component
+
+component -> component : ngOnInit()
+
+component -> http : GET request\n${baseUrl}/api/softwarerequirements
+activate http
+
+http -> jwtInt : Intercept request
+activate jwtInt
+
+jwtInt -> jwtInt : Get token from\nlocalStorage
+
+jwtInt -> jwtInt : Add Authorization:\nBearer <token>
+
+jwtInt -> headerInt : Pass request
+activate headerInt
+
+headerInt -> headerInt : Add headers:\nContent-Type,\nAccept
+
+headerInt -> api : HTTP GET with\nall headers
+activate api
+deactivate headerInt
+deactivate jwtInt
+
+api -> api : Validate JWT token
+
+api -> api : Route to controller
+
+api -> api : MediatR dispatch\nGetSoftwareRequirementsRequest
+
+api -> db : Query documents
+activate db
+db --> api : Requirements list
+deactivate db
+
+api --> http : 200 OK\nGetSoftwareRequirementsResponse
+deactivate api
+
+http --> component : Observable<Response>
+deactivate http
+
+component -> component : response.subscribe()
+
+component -> component : Update state:\nrequirements = data\nloading = false
+
+component -> component : Render Material cards
+
+component --> user : Display requirements
+deactivate component
+
+== Create New Requirement ==
+
+user -> component : Click "Create New"
+activate component
+
+component -> component : Open create form
+
+user -> component : Fill form and submit
+
+component -> http : POST request\n${baseUrl}/api/softwarerequirements\nBody: CreateSoftwareRequirementRequest
+activate http
+
+http -> jwtInt : Intercept
+activate jwtInt
+jwtInt -> jwtInt : Add Bearer token
+jwtInt -> headerInt : Pass
+activate headerInt
+headerInt -> headerInt : Add headers
+headerInt -> api : HTTP POST
+activate api
+deactivate headerInt
+deactivate jwtInt
+
+api -> api : ValidationBehavior\nvalidates request
+
+api -> api : CreateSoftwareRequirementHandler
+
+api -> db : Save new document
+activate db
+db --> api : Success
+deactivate db
+
+api --> http : 200 OK\nCreateSoftwareRequirementResponse
+deactivate api
+
+http --> component : Observable<Response>
+deactivate http
+
+component -> component : response.subscribe()
+
+component -> component : Add to local list or\nreload requirements
+
+component --> user : Show success message\nand updated list
+deactivate component
+
+== Error Handling ==
+
+user -> component : Trigger action
+activate component
+
+component -> http : HTTP request
+activate http
+
+http -> api : Request with interceptors
+activate api
+
+api --> http : 401 Unauthorized\n(invalid/expired token)
+deactivate api
+
+http --> component : Error response
+deactivate http
+
+component -> component : error handler
+
+component -> component : Clear auth state
+
+component -> component : Navigate to /login
+
+component --> user : Redirect to login
+deactivate component
+
+note right of jwtInt
+  **Interceptor Pipeline**
+  All HTTP requests automatically
+  go through interceptor chain:
+  
+  1. JwtInterceptor adds token
+  2. HeadersInterceptor adds headers
+  3. Error interceptor (future)
+  
+  Configured in app.config.ts:
+  provideHttpClient(
+    withInterceptors([...])
+  )
+end note
+
+note left of component
+  **State Management**
+  Currently: Component state
+  - requirements: array
+  - loading: boolean
+  - error: string
+  
+  Future consideration:
+  - NgRx for complex state
+  - Signals for reactivity
+end note
+
+note bottom of api
+  **API Response Format**
+  All responses wrapped in:
+  {
+    "softwareRequirements": [...],
+    "errors": []
+  }
+  
+  Success: errors array empty
+  Failure: errors array populated
+  
+  HTTP status: Usually 200
+  Check errors for validation
+end note
+
+@enduml

@@ -1,0 +1,129 @@
+@startuml Tseten .NET Solution Architecture
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 11
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+scale 0.95
+
+title Tseten .NET Solution Architecture Overview
+
+' Define packages with consistent styling
+skinparam package {
+    BackgroundColor #E3F2FD
+    BorderColor #1976D2
+    FontSize 12
+}
+
+skinparam component {
+    BackgroundColor #BBDEFB
+    BorderColor #1565C0
+}
+
+skinparam database {
+    BackgroundColor #C8E6C9
+    BorderColor #388E3C
+}
+
+package "Presentation Layer" {
+    component "Tseten.Api" as api
+    note right of api
+        **Tseten.Api**
+        ASP.NET Core 8.0 Web API
+        
+        - Controllers (REST endpoints)
+        - Program.cs (DI configuration)
+        - Middleware & Filters
+        - Request Handlers
+        - Swagger/OpenAPI docs
+    end note
+}
+
+package "Core/Domain Layer" {
+    component "Tseten.Core" as core
+    note left of core
+        **Tseten.Core**
+        Domain Models & Business Logic
+        
+        - SoftwareRequirement (aggregate)
+        - Tag (aggregate)
+        - User (aggregate)
+        - Profile (aggregate)
+        - Role (aggregate)
+        - InvitationToken (aggregate)
+        - Request/Response DTOs
+        - Validators (FluentValidation)
+        - ITsetenContext interface
+    end note
+}
+
+package "Infrastructure Layer" {
+    component "Tseten.Infrastructure" as infra
+    note right of infra
+        **Tseten.Infrastructure**
+        Data Access & External Services
+        
+        - TsetenContext (Couchbase Lite)
+        - EF Core DbContext (SQL Server)
+        - PasswordHasher service
+        - TokenService (JWT)
+        - SeedService (data initialization)
+    end note
+}
+
+package "Test Layer" {
+    component "Tseten.Api.Tests" as apiTests
+    component "Tseten.Core.Tests" as coreTests
+    component "Tseten.Infrastructure.Tests" as infraTests
+}
+
+database "Couchbase Lite\n(Document Store)" as couchbase {
+    storage "software-requirements"
+    storage "tags"
+    storage "users"
+}
+
+database "SQL Server\n(Vector Store)" as sqlserver {
+    storage "Embeddings"
+    storage "VectorIndex"
+}
+
+' Dependencies
+api --> core : depends on
+api --> infra : depends on
+infra --> core : depends on
+
+' Test dependencies
+apiTests ..> api : tests
+coreTests ..> core : tests
+infraTests ..> infra : tests
+
+' Data access
+infra --> couchbase : reads/writes\ndocuments
+infra --> sqlserver : stores/queries\nvector embeddings
+
+note right of api
+  **Entry Point**
+  - Exposes REST API
+  - Handles HTTP requests
+  - Dependency injection root
+  - JWT authentication
+end note
+
+note bottom of core
+  **Business Rules**
+  - No dependencies on external libs
+  - CQRS pattern (MediatR requests)
+  - FluentValidation rules
+  - Domain models are source of truth
+end note
+
+note bottom of infra
+  **External Systems**
+  - Dual database strategy
+  - Couchbase for documents
+  - SQL Server for vector search
+  - Authentication services
+end note
+
+@enduml

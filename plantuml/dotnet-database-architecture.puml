@@ -1,0 +1,182 @@
+@startuml Tseten Database Architecture
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten Dual Database Strategy - Data Storage Architecture
+
+skinparam database {
+    BackgroundColor #E8F5E9
+    BorderColor #2E7D32
+}
+
+skinparam component {
+    BackgroundColor #E3F2FD
+    BorderColor #1976D2
+}
+
+skinparam storage {
+    BackgroundColor #FFF9C4
+    BorderColor #F57F17
+}
+
+component "Tseten.Infrastructure" as infra {
+    
+    component "TsetenContext" as couchContext {
+        **Couchbase Lite Context**
+        ====
+        - Database : Database
+        - GetCollection<T>()
+        - SaveDocument<T>()
+        - GetDocument<T>(id)
+        - Query<T>(predicate)
+        - DeleteDocument(id)
+        ----
+        Implements ITsetenContext
+        Document-based operations
+    }
+    
+    component "VectorDbContext" as vectorContext {
+        **EF Core DbContext**
+        ====
+        - Embeddings : DbSet<Embedding>
+        - OnModelCreating()
+        - SaveChangesAsync()
+        ----
+        SQL Server vector storage
+        Entity Framework Core
+    }
+    
+    component "EmbeddingService" as embeddingService {
+        **Vector Embedding Service**
+        ====
+        - GenerateEmbedding(text)
+        - SearchBySimilarity(query, threshold)
+        - CosineSimilarity(v1, v2)
+        ----
+        384-dimensional vectors
+        Semantic search operations
+    }
+}
+
+database "Couchbase Lite\n(Embedded NoSQL)" as couchbase {
+    
+    storage "SoftwareRequirements" as srCollection {
+        **Collection**
+        ====
+        Documents stored as JSON
+        ----
+        Schema:
+        - SoftwareRequirementId (string)
+        - ParentSoftwareRequirementId (string)
+        - Description (string)
+        - CanImplement (bool)
+        - CanTest (bool)
+        - Comments (array)
+        - AcceptanceCriteria (array)
+    }
+    
+    storage "Tags" as tagCollection {
+        **Collection**
+        ====
+        Tag documents
+        ----
+        Schema:
+        - TagId (Guid)
+        - Name (string)
+        - Description (string)
+    }
+    
+    storage "Users" as userCollection {
+        **Collection**
+        ====
+        User documents
+        ----
+        Schema:
+        - UserId (Guid)
+        - Username (string)
+        - PasswordHash (string)
+        - Salt (string)
+        - Email (string)
+        - Roles (array)
+    }
+    
+    storage "Profiles" as profileCollection {
+        **Collection**
+        ====
+        User profile documents
+        ----
+        Schema:
+        - ProfileId (Guid)
+        - UserId (Guid)
+        - FirstName (string)
+        - LastName (string)
+        - Bio (string)
+        - AvatarUrl (string)
+    }
+}
+
+database "SQL Server\n(Vector Store)" as sqlserver {
+    
+    storage "Embeddings" as embeddingTable {
+        **Table**
+        ====
+        Vector embeddings for search
+        ----
+        Columns:
+        - Id (int, PK, Identity)
+        - SoftwareRequirementId (string)
+        - Embedding (float[], 384 dims)
+        - LastUpdated (DateTime)
+        ----
+        Indexed for cosine similarity
+    }
+}
+
+' Relationships
+couchContext --> srCollection : CRUD operations
+couchContext --> tagCollection : CRUD operations
+couchContext --> userCollection : CRUD operations
+couchContext --> profileCollection : CRUD operations
+
+vectorContext --> embeddingTable : EF Core mapping
+
+embeddingService --> vectorContext : uses
+embeddingService --> embeddingTable : query vectors
+
+note right of couchbase
+  **Document Store**
+  Couchbase Lite embedded
+  NoSQL database. Stores
+  full requirement documents
+  with hierarchical structure.
+  
+  JSON document format.
+  Schema-less flexibility.
+  Offline-first capable.
+end note
+
+note right of sqlserver
+  **Vector Store**
+  SQL Server/SQL Express
+  stores 384-dimensional
+  embeddings for semantic
+  search capabilities.
+  
+  Cosine similarity queries.
+  Efficient vector indexing.
+end note
+
+note bottom of embeddingService
+  **Why Dual Database?**
+  1. Couchbase: Fast document
+     retrieval, hierarchical data
+  2. SQL Server: Optimized for
+     vector similarity queries
+  
+  Documents synced to vectors
+  via /embeddings/import endpoint
+end note
+
+@enduml

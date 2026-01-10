@@ -1,0 +1,197 @@
+@startuml Tseten Deployment Architecture
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten - Deployment Architecture
+
+skinparam node {
+    BackgroundColor #E3F2FD
+    BorderColor #1976D2
+}
+
+skinparam component {
+    BackgroundColor #BBDEFB
+    BorderColor #1565C0
+}
+
+skinparam database {
+    BackgroundColor #C8E6C9
+    BorderColor #388E3C
+}
+
+skinparam cloud {
+    BackgroundColor #FFF9C4
+    BorderColor #F57F17
+}
+
+actor "End User" as user
+
+cloud "Web Browser" {
+    component "Angular 19 SPA" as spa {
+        **Tseten.App**
+        ====
+        - TypeScript 5.6
+        - Angular Material UI
+        - Standalone components
+        - Served as static files
+        ----
+        Build: ng build --configuration production
+        Output: dist/ folder
+    }
+}
+
+node "Application Server" {
+    component "ASP.NET Core 8.0" as api {
+        **Tseten.Api**
+        ====
+        - .NET 8.0 Runtime
+        - Kestrel web server
+        - HTTPS (port 7157)
+        - HTTP (port 5000)
+        ----
+        Run: dotnet run
+        Deploy: dotnet publish -c Release
+    }
+    
+    component "Tseten.Core" as core {
+        **Domain Library**
+        ====
+        - Business logic
+        - Domain models
+        - Validators
+    }
+    
+    component "Tseten.Infrastructure" as infra {
+        **Infrastructure Library**
+        ====
+        - Data access
+        - External services
+        - Authentication
+    }
+}
+
+node "Data Server" {
+    database "Couchbase Lite" as couchbase {
+        **Embedded Database**
+        ====
+        - NoSQL document store
+        - File-based: *.cblite2
+        - Located in app directory
+        ----
+        Collections:
+        - software-requirements
+        - tags
+        - users
+        - profiles
+    }
+    
+    database "SQL Server / SQL Express" as sqlserver {
+        **Relational Database**
+        ====
+        - Vector embeddings storage
+        - TsetenVectorDb database
+        ----
+        Connection String:
+        Server=.\\SQLEXPRESS;
+        Database=TsetenVectorDb;
+        Trusted_Connection=true;
+        ----
+        Tables:
+        - Embeddings (384-dim vectors)
+    }
+}
+
+' User interactions
+user --> spa : HTTPS\nhttps://localhost:4200
+
+' API communication
+spa --> api : REST API\nJSON over HTTPS\nhttps://localhost:7157/api
+
+' Internal dependencies
+api --> core : uses
+api --> infra : uses
+infra --> core : uses
+
+' Data access
+infra --> couchbase : Couchbase.Lite.dll\nEmbedded access
+infra --> sqlserver : EF Core\nTCP/IP connection
+
+note right of spa
+**Static Hosting Options**
+- Development: ng serve
+- Production: nginx, IIS, Azure Static Web Apps
+- Build artifacts in dist/ folder
+- Environment-specific configs
+
+**CORS Configuration**
+Backend must allow frontend origin:
+WithOrigins("http://localhost:4200")
+end note
+
+note bottom of api
+**Hosting Options**
+- Development: dotnet run
+- Windows: IIS with ASP.NET Core Module
+- Linux: Kestrel with reverse proxy (nginx)
+- Docker: Container deployment
+- Azure: App Service, Container Apps
+
+**Configuration**
+- appsettings.json (base)
+- appsettings.Development.json
+- appsettings.Production.json
+- Environment variables
+end note
+
+note right of couchbase
+**Embedded Database**
+No separate server process needed.
+Database files stored locally with app.
+Perfect for single-machine deployment.
+
+**Backup**
+Backup *.cblite2 directory periodically.
+end note
+
+note right of sqlserver
+**Vector Database**
+Requires SQL Server or SQL Express.
+Can be on same or different machine.
+
+**Setup**
+1. Create database: TsetenVectorDb
+2. EF Core migrations apply schema
+3. Configure connection string
+
+**Alternatives**
+- Azure SQL Database (cloud)
+- PostgreSQL with pgvector
+- Separate vector DB (Pinecone, Weaviate)
+end note
+
+== Development Environment ==
+
+package "Developer Machine" {
+    node "Dev Setup" {
+        [Visual Studio / VS Code]
+        [.NET 8 SDK]
+        [Node.js 18+ / npm]
+        [SQL Server Express]
+    }
+}
+
+note bottom of "Dev Setup"
+**Development Setup Steps**
+1. Install .NET 8 SDK
+2. Install Node.js 18+
+3. Install SQL Server Express
+4. Clone repository
+5. Backend: dotnet restore, dotnet run
+6. Frontend: npm install, ng serve
+7. Run migrations for SQL Server
+8. Seed database with sample data
+end note
+
+@enduml

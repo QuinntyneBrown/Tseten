@@ -1,0 +1,199 @@
+@startuml Tseten Angular Component and Routing
+!define RECTANGLE_WIDTH 280
+skinparam backgroundColor #FEFEFE
+skinparam wrapWidth 250
+skinparam maxMessageSize 200
+
+title Tseten Angular - Component Hierarchy and Routing
+
+skinparam component {
+    BackgroundColor #FCE4EC
+    BorderColor #C2185B
+}
+
+skinparam package {
+    BackgroundColor #F3E5F5
+    BorderColor #8E24AA
+}
+
+package "Application Root" {
+    component "AppComponent" as appRoot {
+        **Root Component**
+        ====
+        Selector: app-root
+        ----
+        Template: <router-outlet>
+        Styles: styles.scss
+        ----
+        Entry point component
+        Hosts router outlet
+    }
+}
+
+package "Routing Configuration" {
+    component "Routes Definition" as routes {
+        **app.routes.ts**
+        ====
+        Route: '' (empty)
+        → redirectTo: '/login'
+        ----
+        Route: 'login'
+        → LoginPage
+        ----
+        Route: 'workspace'
+        → WorkspacePage
+        → canActivate: [AuthGuard]
+        ----
+        Route: 'requirements'
+        → RequirementsListPage
+        → canActivate: [AuthGuard]
+        ----
+        Route: '**'
+        → redirectTo: '/login'
+    }
+}
+
+package "Public Pages (Unauthenticated)" {
+    component "LoginPage" as login {
+        **Login Component**
+        ====
+        Path: /login
+        Selector: app-login
+        Standalone: true
+        ----
+        **Template:**
+        - Username input
+        - Password input
+        - Login button
+        - Error messages
+        ----
+        **Logic:**
+        - FormGroup validation
+        - AuthService.login()
+        - Navigate to /workspace
+        - Handle errors
+    }
+}
+
+package "Protected Pages (Authenticated)" {
+    component "WorkspacePage" as workspace {
+        **Workspace Component**
+        ====
+        Path: /workspace
+        Selector: app-workspace
+        Standalone: true
+        Guard: AuthGuard
+        ----
+        **Template:**
+        - Navigation sidebar
+        - Header with user info
+        - Content area
+        - Logout button
+        ----
+        **Logic:**
+        - Display current user
+        - Navigation menu
+        - Logout functionality
+    }
+    
+    component "RequirementsListPage" as reqList {
+        **Requirements List Component**
+        ====
+        Path: /requirements
+        Selector: app-requirements-list
+        Standalone: true
+        Guard: AuthGuard
+        ----
+        **Template:**
+        - List of requirement cards
+        - Search bar
+        - Create new button
+        - Loading spinner
+        - Error display
+        ----
+        **Logic:**
+        - Load requirements (ngOnInit)
+        - HttpClient GET request
+        - Display in Material cards
+        - Handle loading state
+        - Handle errors
+        ----
+        **Material Components:**
+        - MatCardModule
+        - MatButtonModule
+        - MatIconModule
+        - MatChipsModule
+        - MatProgressSpinnerModule
+    }
+}
+
+package "Reusable Components (Future)" {
+    component "RequirementDetailComponent" as reqDetail {
+        View/edit single requirement
+        Acceptance criteria display
+        Comments section
+    }
+    
+    component "AcceptanceCriteriaComponent" as acComponent {
+        Given-When-Then display
+        Priority and status
+        CRUD operations
+    }
+    
+    component "CommentThreadComponent" as commentThread {
+        Nested comment display
+        Reply functionality
+        Resolve/unresolve
+    }
+}
+
+' Routing flow
+appRoot --> routes : uses
+routes --> login : default route
+routes --> workspace : protected
+routes --> reqList : protected
+
+' Component hierarchy
+workspace ..> reqDetail : may contain
+reqList ..> reqDetail : navigates to
+reqDetail ..> acComponent : contains
+reqDetail ..> commentThread : contains
+
+note right of login
+  **Unauthenticated Route**
+  Accessible without token.
+  Redirects to /workspace
+  on successful login.
+end note
+
+note bottom of workspace
+  **Protected Routes**
+  AuthGuard checks JWT token.
+  Redirects to /login if not
+  authenticated.
+  
+  Token stored in localStorage.
+end note
+
+note left of reqList
+  **Data Fetching**
+  Component uses HttpClient
+  directly (no separate service
+  layer currently).
+  
+  API call in ngOnInit():
+  GET /api/softwarerequirements
+  
+  Future: Extract to service.
+end note
+
+note bottom of routes
+  **Standalone Architecture**
+  No NgModules. Each component
+  declares its own dependencies.
+  
+  Routes use function-based
+  configuration: provideRouter()
+end note
+
+@enduml
