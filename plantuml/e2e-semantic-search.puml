@@ -5,6 +5,7 @@ skinparam wrapWidth 250
 skinparam maxMessageSize 200
 
 title Tseten - End-to-End: Semantic Search Workflow
+scale 0.5
 
 skinparam sequence {
     ArrowColor #6A1B9A
@@ -153,7 +154,7 @@ deactivate http
 ui --> user : Display page 2
 deactivate ui
 
-note bottom of sqlServer
+note over sqlServer
 **Embedding Sync**
 Embeddings are populated via:
 POST /api/softwarerequirements/embeddings/import

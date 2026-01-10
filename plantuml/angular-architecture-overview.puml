@@ -5,6 +5,7 @@ skinparam wrapWidth 250
 skinparam maxMessageSize 200
 
 title Tseten Angular 19 Application - Architecture Overview
+scale 0.42
 
 skinparam package {
     BackgroundColor #F3E5F5
@@ -19,152 +20,34 @@ skinparam component {
 package "Tseten.App (Angular 19)" {
     
     package "Core (@core)" {
-        component "AuthService" as authService {
-            **Authentication Service**
-            ====
-            - login(username, password)
-            - logout()
-            - getCurrentUser()
-            - isAuthenticated()
-            - token management
-        }
-        
-        component "LocalStorageService" as storage {
-            **Storage Service**
-            ====
-            - setItem(key, value)
-            - getItem(key)
-            - removeItem(key)
-            - clear()
-            ----
-            Manages browser storage
-        }
-        
-        component "AuthGuard" as guard {
-            **Route Guard**
-            ====
-            - canActivate()
-            - Protects routes
-            - Redirects to login
-        }
-        
-        component "JwtInterceptor" as jwtInterceptor {
-            **HTTP Interceptor**
-            ====
-            - Adds Authorization header
-            - Bearer token injection
-        }
-        
-        component "HeadersInterceptor" as headersInterceptor {
-            **HTTP Interceptor**
-            ====
-            - Adds common headers
-            - Content-Type, Accept
-        }
+        component [AuthService] as authService
+        component [LocalStorageService] as storage
+        component [AuthGuard] as guard
+        component [JwtInterceptor] as jwtInterceptor
+        component [HeadersInterceptor] as headersInterceptor
     }
     
     package "Pages (Routes)" {
-        component "LoginPage" as login {
-            **Login Component**
-            ====
-            Route: /login
-            ----
-            - Login form
-            - Calls AuthService
-            - Redirects on success
-        }
-        
-        component "WorkspacePage" as workspace {
-            **Workspace Component**
-            ====
-            Route: /workspace
-            ----
-            - Main application view
-            - Protected by AuthGuard
-            - Container for features
-        }
-        
-        component "RequirementsListPage" as reqList {
-            **Requirements List**
-            ====
-            Route: /requirements
-            ----
-            - Lists all requirements
-            - CRUD operations
-            - Search functionality
-            - Material cards display
-        }
+        component [LoginPage] as login
+        component [WorkspacePage] as workspace
+        component [RequirementsListPage] as reqList
     }
     
     package "Models (Domain)" {
-        component "SoftwareRequirement" as reqModel {
-            **TypeScript Interface**
-            ====
-            - softwareRequirementId
-            - description
-            - canImplement
-            - canTest
-            - comments
-            - acceptanceCriteria
-        }
-        
-        component "AcceptanceCriteria" as acModel {
-            **TypeScript Interface**
-            ====
-            - acceptanceCriteriaId
-            - given, when, then
-            - priority, status
-        }
-        
-        component "Comment" as commentModel {
-            **TypeScript Interface**
-            ====
-            - commentId
-            - body, author
-            - resolved
-            - comments (nested)
-        }
+        component [SoftwareRequirement] as reqModel
+        component [AcceptanceCriteria] as acModel
+        component [Comment] as commentModel
     }
     
     package "Configuration" {
-        component "app.config.ts" as appConfig {
-            **Application Config**
-            ====
-            - Providers setup
-            - HTTP client config
-            - Router config
-            - Interceptors
-        }
-        
-        component "app.routes.ts" as routes {
-            **Routing Configuration**
-            ====
-            - Route definitions
-            - Guards assignment
-            - Lazy loading setup
-        }
-        
-        component "environment.ts" as env {
-            **Environment Config**
-            ====
-            - baseUrl (API endpoint)
-            - production flag
-            - feature flags
-        }
+        component [app.config.ts] as appConfig
+        component [app.routes.ts] as routes
+        component [environment.ts] as env
     }
 }
 
 package "Angular Material UI" {
-    component "Material Components" as material {
-        - MatCardModule
-        - MatButtonModule
-        - MatIconModule
-        - MatChipsModule
-        - MatProgressSpinnerModule
-        - MatDividerModule
-        - MatFormFieldModule
-        - MatInputModule
-    }
+    component [Material Components] as material
 }
 
 ' Core service relationships
@@ -194,24 +77,42 @@ routes --> workspace : defines
 routes --> reqList : defines
 
 note right of authService
+  **Authentication Service**
+  - login(username, password)
+  - logout()
+  - getCurrentUser()
+  - isAuthenticated()
+  - token management
+  
   **Standalone Components**
   Angular 19 uses standalone
   components without NgModules.
-  
   Services provided at root level
   via app.config.ts providers array.
 end note
 
-note bottom of reqList
-  **Material Design**
-  Uses Angular Material 19
-  components for consistent UI.
+note right of storage
+  **Storage Service**
+  - setItem(key, value)
+  - getItem(key)
+  - removeItem(key)
+  - clear()
   
-  Azure Blue theme applied.
-  Responsive layout.
+  Manages browser storage
+end note
+
+note right of guard
+  **Route Guard**
+  - canActivate()
+  - Protects routes
+  - Redirects to login
 end note
 
 note left of jwtInterceptor
+  **JWT HTTP Interceptor**
+  - Adds Authorization header
+  - ****** injection
+  
   **HTTP Pipeline**
   Interceptors automatically
   add authentication and
@@ -219,6 +120,102 @@ note left of jwtInterceptor
   
   Configured in app.config.ts
   provideHttpClient().
+end note
+
+note left of headersInterceptor
+  **Headers Interceptor**
+  - Adds common headers
+  - Content-Type, Accept
+end note
+
+note right of login
+  **Login Component**
+  Route: /login
+  - Login form
+  - Calls AuthService
+  - Redirects on success
+end note
+
+note right of workspace
+  **Workspace Component**
+  Route: /workspace
+  - Main application view
+  - Protected by AuthGuard
+  - Container for features
+end note
+
+note bottom of reqList
+  **Requirements List**
+  Route: /requirements
+  - Lists all requirements
+  - CRUD operations
+  - Search functionality
+  - Material cards display
+  
+  **Material Design**
+  Uses Angular Material 19
+  components for consistent UI.
+  Azure Blue theme applied.
+  Responsive layout.
+end note
+
+note right of reqModel
+  **TypeScript Interface**
+  - softwareRequirementId
+  - description
+  - canImplement
+  - canTest
+  - comments
+  - acceptanceCriteria
+end note
+
+note right of acModel
+  **TypeScript Interface**
+  - acceptanceCriteriaId
+  - given, when, then
+  - priority, status
+end note
+
+note right of commentModel
+  **TypeScript Interface**
+  - commentId
+  - body, author
+  - resolved
+  - comments (nested)
+end note
+
+note right of appConfig
+  **Application Config**
+  - Providers setup
+  - HTTP client config
+  - Router config
+  - Interceptors
+end note
+
+note right of routes
+  **Routing Configuration**
+  - Route definitions
+  - Guards assignment
+  - Lazy loading setup
+end note
+
+note right of env
+  **Environment Config**
+  - baseUrl (API endpoint)
+  - production flag
+  - feature flags
+end note
+
+note bottom of material
+  Material Components Used:
+  - MatCardModule
+  - MatButtonModule
+  - MatIconModule
+  - MatChipsModule
+  - MatProgressSpinnerModule
+  - MatDividerModule
+  - MatFormFieldModule
+  - MatInputModule
 end note
 
 @enduml

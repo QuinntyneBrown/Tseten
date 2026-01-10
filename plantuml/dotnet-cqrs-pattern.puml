@@ -5,6 +5,7 @@ skinparam wrapWidth 250
 skinparam maxMessageSize 200
 
 title Tseten CQRS Pattern - Request/Response Flow with MediatR
+scale 0.20
 
 skinparam class {
     BackgroundColor #FFF9C4

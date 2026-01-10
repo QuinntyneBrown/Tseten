@@ -6,6 +6,7 @@ skinparam wrapWidth 250
 skinparam maxMessageSize 200
 
 title Tseten Core - Domain Models and Aggregates
+scale 0.55
 
 skinparam class {
     BackgroundColor #E1F5FE

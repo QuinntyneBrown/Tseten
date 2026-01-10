@@ -5,6 +5,7 @@ skinparam wrapWidth 250
 skinparam maxMessageSize 200
 
 title Tseten Angular - Component Hierarchy and Routing
+scale 0.8
 
 skinparam component {
     BackgroundColor #FCE4EC
@@ -17,134 +18,29 @@ skinparam package {
 }
 
 package "Application Root" {
-    component "AppComponent" as appRoot {
-        **Root Component**
-        ====
-        Selector: app-root
-        ----
-        Template: <router-outlet>
-        Styles: styles.scss
-        ----
-        Entry point component
-        Hosts router outlet
-    }
+    component [AppComponent] as appRoot
 }
 
 package "Routing Configuration" {
-    component "Routes Definition" as routes {
-        **app.routes.ts**
-        ====
-        Route: '' (empty)
-        → redirectTo: '/login'
-        ----
-        Route: 'login'
-        → LoginPage
-        ----
-        Route: 'workspace'
-        → WorkspacePage
-        → canActivate: [AuthGuard]
-        ----
-        Route: 'requirements'
-        → RequirementsListPage
-        → canActivate: [AuthGuard]
-        ----
-        Route: '**'
-        → redirectTo: '/login'
-    }
+    component [Routes Definition] as routes
 }
 
 package "Public Pages (Unauthenticated)" {
-    component "LoginPage" as login {
-        **Login Component**
-        ====
-        Path: /login
-        Selector: app-login
-        Standalone: true
-        ----
-        **Template:**
-        - Username input
-        - Password input
-        - Login button
-        - Error messages
-        ----
-        **Logic:**
-        - FormGroup validation
-        - AuthService.login()
-        - Navigate to /workspace
-        - Handle errors
-    }
+    component [LoginPage] as login
 }
 
 package "Protected Pages (Authenticated)" {
-    component "WorkspacePage" as workspace {
-        **Workspace Component**
-        ====
-        Path: /workspace
-        Selector: app-workspace
-        Standalone: true
-        Guard: AuthGuard
-        ----
-        **Template:**
-        - Navigation sidebar
-        - Header with user info
-        - Content area
-        - Logout button
-        ----
-        **Logic:**
-        - Display current user
-        - Navigation menu
-        - Logout functionality
-    }
+    component [WorkspacePage] as workspace
     
-    component "RequirementsListPage" as reqList {
-        **Requirements List Component**
-        ====
-        Path: /requirements
-        Selector: app-requirements-list
-        Standalone: true
-        Guard: AuthGuard
-        ----
-        **Template:**
-        - List of requirement cards
-        - Search bar
-        - Create new button
-        - Loading spinner
-        - Error display
-        ----
-        **Logic:**
-        - Load requirements (ngOnInit)
-        - HttpClient GET request
-        - Display in Material cards
-        - Handle loading state
-        - Handle errors
-        ----
-        **Material Components:**
-        - MatCardModule
-        - MatButtonModule
-        - MatIconModule
-        - MatChipsModule
-        - MatProgressSpinnerModule
-    }
+    component [RequirementsListPage] as reqList
 }
 
 package "Reusable Components (Future)" {
-    component "RequirementDetailComponent" as reqDetail {
-        View/edit single requirement
-        Acceptance criteria display
-        Comments section
-    }
+    component [RequirementDetailComponent] as reqDetail
     
-    component "AcceptanceCriteriaComponent" as acComponent {
-        Given-When-Then display
-        Priority and status
-        CRUD operations
-    }
+    component [AcceptanceCriteriaComponent] as acComponent
     
-    component "CommentThreadComponent" as commentThread {
-        Nested comment display
-        Reply functionality
-        Resolve/unresolve
-    }
+    component [CommentThreadComponent] as commentThread
 }
 
 ' Routing flow

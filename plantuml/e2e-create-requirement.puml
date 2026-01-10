@@ -5,6 +5,7 @@ skinparam wrapWidth 250
 skinparam maxMessageSize 200
 
 title Tseten - End-to-End: Create Software Requirement Workflow
+scale 0.48
 
 skinparam sequence {
     ArrowColor #1976D2
@@ -169,7 +170,7 @@ note left of handler
   }
 end note
 
-note bottom of couchbase
+note over couchbase
   **Next Steps**
   After creating requirement,
   user should call:

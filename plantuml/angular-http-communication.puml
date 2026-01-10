@@ -5,6 +5,7 @@ skinparam wrapWidth 250
 skinparam maxMessageSize 200
 
 title Tseten Angular - HTTP Communication and Data Flow
+scale 0.9
 
 skinparam sequence {
     ArrowColor #1976D2
@@ -173,7 +174,7 @@ note left of component
   - Signals for reactivity
 end note
 
-note bottom of api
+note over api
   **API Response Format**
   All responses wrapped in:
   {

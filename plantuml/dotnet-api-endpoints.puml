@@ -18,108 +18,11 @@ skinparam interface {
 
 package "API Controllers" {
     
-    component "SoftwareRequirementsController" as srController {
-        **Base Route:** /api/softwarerequirements
-        ====
-        **POST /** - Create
-        Creates new software requirement
-        Body: CreateSoftwareRequirementRequest
-        Returns: CreateSoftwareRequirementResponse
-        ----
-        **PUT /** - Update
-        Updates existing requirement
-        Body: UpdateSoftwareRequirementRequest
-        Returns: UpdateSoftwareRequirementResponse
-        ----
-        **DELETE /{id}** - Delete
-        Deletes requirement by ID
-        Route: softwareRequirementId
-        Returns: DeleteSoftwareRequirementResponse
-        ----
-        **GET /** - Get All
-        Lists all requirements
-        Returns: GetSoftwareRequirementsResponse
-        ----
-        **GET /{id}** - Get By ID
-        Gets single requirement
-        Route: softwareRequirementId
-        Returns: GetSoftwareRequirementByIdResponse
-        ----
-        **GET /search** - Semantic Search
-        Vector similarity search
-        Query: query, pageNumber, pageSize
-        Query: similarityThreshold, filters
-        Returns: SearchSoftwareRequirementsResponse
-        ----
-        **POST /embeddings/import** - Import
-        Syncs requirements to vector DB
-        Returns: ImportEmbeddingsResponse
-    }
+    component [SoftwareRequirementsController] as srController
     
-    component "TagsController" as tagController {
-        **Base Route:** /api/tags
-        ====
-        **POST /** - Create Tag
-        Creates new tag
-        Body: CreateTagRequest
-        Returns: CreateTagResponse
-        ----
-        **PUT /** - Update Tag
-        Updates existing tag
-        Body: UpdateTagRequest
-        Returns: UpdateTagResponse
-        ----
-        **DELETE /{id}** - Delete Tag
-        Deletes tag by ID
-        Route: tagId
-        Returns: DeleteTagResponse
-        ----
-        **GET /** - Get All Tags
-        Lists all tags
-        Returns: GetTagsResponse
-        ----
-        **GET /{id}** - Get Tag By ID
-        Gets single tag
-        Route: tagId
-        Returns: GetTagByIdResponse
-    }
+    component [TagsController] as tagController
     
-    component "UserController" as userController {
-        **Base Route:** /api/users
-        ====
-        **POST /authenticate** - Login
-        Authenticates user credentials
-        Body: AuthenticateRequest
-        Returns: AuthenticateResponse (JWT token)
-        ----
-        **POST /** - Create User
-        Registers new user
-        Body: CreateUserRequest
-        Returns: CreateUserResponse
-        ----
-        **POST /change-password** - Change Password
-        Updates user password
-        Body: ChangePasswordRequest
-        Returns: ChangePasswordResponse
-        ----
-        **GET /** - Get All Users
-        Lists all users (admin only)
-        Returns: GetUsersResponse
-        ----
-        **GET /{id}** - Get User By ID
-        Gets single user
-        Route: userId
-        Returns: GetUserByIdResponse
-        ----
-        **GET /current** - Get Current User
-        Gets authenticated user info
-        Returns: GetCurrentUserResponse
-        ----
-        **GET /exists** - User Exists
-        Checks if username exists
-        Query: username
-        Returns: UserExistsResponse
-    }
+    component [UserController] as userController
 }
 
 interface "IMediator" as mediator
